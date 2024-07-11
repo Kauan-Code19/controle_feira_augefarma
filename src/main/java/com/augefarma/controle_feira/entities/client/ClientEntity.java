@@ -1,16 +1,19 @@
 package com.augefarma.controle_feira.entities.client;
 
+import com.augefarma.controle_feira.entities.check_in.CheckInEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.EqualsAndHashCode;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -37,4 +40,7 @@ public class ClientEntity {
 
     @Column(name = "corporate_reason", nullable = false, unique = true, updatable = false)
     private String corporateReason;
+
+    @OneToMany(mappedBy = "clientId")
+    private List<CheckInEntity> checkIns;
 }
