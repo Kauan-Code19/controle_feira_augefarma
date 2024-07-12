@@ -59,7 +59,7 @@ public class ClientService {
             return new ClientResponseDto(client); // If found, convert the entity to a DTO and return it
         } catch (EntityNotFoundException exception) {
             // If the client entity is not found, throw a custom exception indicating the resource is not found
-            throw new ResourceNotFoundException("Recurso não encontrado");
+            throw new ResourceNotFoundException("Resource not found");
         }
     }
 }
