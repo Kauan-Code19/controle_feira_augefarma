@@ -47,10 +47,18 @@ public class LaboratoryController {
         return ResponseEntity.created(uri).body(laboratoryResponseDto);
     }
 
+    /**
+     * Endpoint to get a laboratory by its ID.
+     *
+     * @param laboratoryId the ID of the laboratory to retrieve
+     * @return a ResponseEntity containing the laboratory response DTO
+     */
     @GetMapping("/{laboratoryId}")
     public ResponseEntity<LaboratoryResponseDto> getLaboratoryById(@PathVariable Long laboratoryId) {
+        // Call the service to get the laboratory by ID and obtain the response DTO
         LaboratoryResponseDto laboratoryResponseDto = laboratoryService.getLaboratoryById(laboratoryId);
 
+        // Return a ResponseEntity with status 200 (OK) and the response body containing the laboratory DTO
         return ResponseEntity.ok(laboratoryResponseDto);
     }
 }
