@@ -18,17 +18,25 @@ public class ClientService {
         this.clientRepository = clientRepository;
     }
 
+    /**
+     * Registers a new client by converting the ClientDto to a ClientEntity,
+     * saving it to the repository, and returning a ClientResponseDto.
+     *
+     * @param clientDto the data transfer object containing client information
+     * @return a ClientResponseDto containing the saved client information
+     */
     @Transactional
     public ClientResponseDto registerClient(ClientDto clientDto) {
-        ClientEntity client = new ClientEntity();
+        ClientEntity client = new ClientEntity(); // Create a new ClientEntity
 
+        // Set the properties of the client entity from the DTO
         client.setFullName(clientDto.getFullName());
         client.setCpf(clientDto.getCpf());
         client.setCnpj(clientDto.getCnpj());
         client.setCorporateReason(clientDto.getCorporateReason());
 
-        clientRepository.save(client);
+        clientRepository.save(client); // Save the client entity to the repository
 
-        return new ClientResponseDto(client);
+        return new ClientResponseDto(client); // Return a response DTO containing the saved client information
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.net.URI;
 
 @RestController
@@ -25,13 +24,24 @@ public class ClientController {
         this.clientService = clientService;
     }
 
+    /**
+     * Endpoint to register a new client.
+     *
+     * @param clientDto the DTO containing the client's information
+     * @return a ResponseEntity containing the client response DTO and the URI of the new resource
+     */
     @PostMapping
     public ResponseEntity<ClientResponseDto> registerClient(@Valid @RequestBody ClientDto clientDto) {
+        // Call the service to register the client and obtain the response DTO
         ClientResponseDto clientResponseDto = clientService.registerClient(clientDto);
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{/id}")
-                .buildAndExpand(clientResponseDto.getId()).toUri();
+        // Create the URI of the new resource created
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("{/id}")
+                .buildAndExpand(clientResponseDto.getId())
+                .toUri();
 
+        // Return a ResponseEntity with status 201 (Created) and the response body containing the client DTO
         return ResponseEntity.created(uri).body(clientResponseDto);
     }
 }
