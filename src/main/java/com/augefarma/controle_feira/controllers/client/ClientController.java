@@ -6,10 +6,7 @@ import com.augefarma.controle_feira.services.client.ClientService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
@@ -43,5 +40,20 @@ public class ClientController {
 
         // Return a ResponseEntity with status 201 (Created) and the response body containing the client DTO
         return ResponseEntity.created(uri).body(clientResponseDto);
+    }
+
+    /**
+     * Endpoint to retrieve a client by their ID.
+     *
+     * @param clientId the ID of the client to retrieve
+     * @return a ResponseEntity containing the client response DTO
+     */
+    @GetMapping("/{clientId}")
+    public ResponseEntity<ClientResponseDto> getClientById(@PathVariable Long clientId) {
+        // Retrieve client details from the service using the provided client ID
+        ClientResponseDto clientResponseDto = clientService.getClientById(clientId);
+
+        // Return a ResponseEntity with status 200 (OK) and the client response DTO
+        return ResponseEntity.ok(clientResponseDto);
     }
 }
