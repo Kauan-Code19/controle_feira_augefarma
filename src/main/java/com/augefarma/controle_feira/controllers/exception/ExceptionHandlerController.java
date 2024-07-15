@@ -2,6 +2,7 @@ package com.augefarma.controle_feira.controllers.exception;
 
 import com.augefarma.controle_feira.dtos.exception.CustomErrorDto;
 import com.augefarma.controle_feira.dtos.exception.ValidationErrorDto;
+import com.augefarma.controle_feira.exceptions.InvalidCredentialsException;
 import com.augefarma.controle_feira.exceptions.JWTGenerationException;
 import com.augefarma.controle_feira.exceptions.JWTValidException;
 import com.augefarma.controle_feira.exceptions.ResourceNotFoundException;
@@ -92,6 +93,26 @@ public class ExceptionHandlerController {
     @ExceptionHandler(JWTValidException.class)
     public ResponseEntity<CustomErrorDto> jwtValidException(JWTValidException exception,
                                                             HttpServletRequest request) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;  // Set the HTTP status to 401 Unauthorized
+
+        // Create a new CustomErrorDto with the current timestamp, status code, error message, and request URI
+        CustomErrorDto customErrorDto = new CustomErrorDto(Instant.now(),
+                status.value(), exception.getMessage(), request.getRequestURI());
+
+        // Return a ResponseEntity with the error details and the HTTP status
+        return ResponseEntity.status(status).body(customErrorDto);
+    }
+
+    /**
+     * Handles exceptions related to invalid credentials.
+     *
+     * @param exception the exception thrown when invalid credentials are provided
+     * @param request the HTTP request during which the exception was thrown
+     * @return a ResponseEntity containing the error details
+     */
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<CustomErrorDto> invalidCredentialsException(InvalidCredentialsException exception,
+                                                                      HttpServletRequest request) {
         HttpStatus status = HttpStatus.UNAUTHORIZED;  // Set the HTTP status to 401 Unauthorized
 
         // Create a new CustomErrorDto with the current timestamp, status code, error message, and request URI

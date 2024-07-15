@@ -15,7 +15,7 @@ import java.time.ZoneOffset;
 import java.util.Date;
 
 @Service
-public class tokenService {
+public class TokenService {
 
     @Value("${api.security.token.secret}")
     private String secret; // Secret key for signing the JWT
