@@ -5,6 +5,8 @@ import com.augefarma.controle_feira.dtos.client.ClientResponseDto;
 import com.augefarma.controle_feira.services.client.ClientService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,5 +62,16 @@ public class ClientController {
 
         // Return a ResponseEntity with status 200 (OK) and the client response DTO
         return ResponseEntity.ok(clientResponseDto);
+    }
+
+    @GetMapping("/{clientId}/badge")
+    public ResponseEntity<byte[]> generateClientBadge(@PathVariable Long clientId) {
+        byte[] badge = clientService.generateClientBadge(clientId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.set("Content-Disposition", "attachment; filename=" + "client" + clientId + "_badge.pdf");
+
+        return ResponseEntity.ok().headers(headers).body(badge);
     }
 }

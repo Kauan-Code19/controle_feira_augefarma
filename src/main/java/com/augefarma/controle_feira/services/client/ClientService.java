@@ -5,19 +5,25 @@ import com.augefarma.controle_feira.dtos.client.ClientResponseDto;
 import com.augefarma.controle_feira.entities.client.ClientEntity;
 import com.augefarma.controle_feira.exceptions.ResourceNotFoundException;
 import com.augefarma.controle_feira.repositories.client.ClientRepository;
+import com.augefarma.controle_feira.services.badge.BadgeService;
+import com.google.zxing.WriterException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+
 @Service
 public class ClientService {
 
     private final ClientRepository clientRepository;
+    private final BadgeService badgeService;
 
     @Autowired
-    public ClientService(ClientRepository clientRepository) {
+    public ClientService(ClientRepository clientRepository, BadgeService badgeService) {
         this.clientRepository = clientRepository;
+        this.badgeService = badgeService;
     }
 
     /**
@@ -60,6 +66,21 @@ public class ClientService {
         } catch (EntityNotFoundException exception) {
             // If the client entity is not found, throw a custom exception indicating the resource is not found
             throw new ResourceNotFoundException("Resource not found");
+        }
+    }
+
+    public byte[] generateClientBadge(Long clientId) {
+
+        try {
+            // Attempt to retrieve the client entity from the repository using the given ID
+            ClientEntity client = clientRepository.getReferenceById(clientId);
+
+            return badgeService.generateBadge(client);
+        } catch (EntityNotFoundException exception) {
+            // If the client entity is not found, throw a custom exception indicating the resource is not found
+            throw new ResourceNotFoundException("Resource not found");
+        } catch (IOException | WriterException e) {
+            throw new RuntimeException(e);
         }
     }
 }
