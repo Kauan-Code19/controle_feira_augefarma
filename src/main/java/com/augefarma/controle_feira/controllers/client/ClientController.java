@@ -64,14 +64,23 @@ public class ClientController {
         return ResponseEntity.ok(clientResponseDto);
     }
 
+    /**
+     * Endpoint to generate a badge for a client.
+     *
+     * @param clientId the ID of the client for which to generate the badge
+     * @return a ResponseEntity containing the badge PDF as a byte array
+     */
     @GetMapping("/{clientId}/badge")
     public ResponseEntity<byte[]> generateClientBadge(@PathVariable Long clientId) {
+        // Generate the badge for the client by calling the service
         byte[] badge = clientService.generateClientBadge(clientId);
 
+        // Create HTTP headers to set the content type and the disposition as attachment with a filename
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.set("Content-Disposition", "attachment; filename=" + "client" + clientId + "_badge.pdf");
+        headers.set("Content-Disposition", "attachment; filename=client_" + clientId + "_badge.pdf");
 
+        // Return a ResponseEntity with status 200 (OK), the headers, and the badge byte array
         return ResponseEntity.ok().headers(headers).body(badge);
     }
 }

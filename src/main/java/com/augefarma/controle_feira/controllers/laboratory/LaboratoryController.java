@@ -5,6 +5,8 @@ import com.augefarma.controle_feira.dtos.laboratory.LaboratoryResponseDto;
 import com.augefarma.controle_feira.services.laboratory.LaboratoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,5 +62,25 @@ public class LaboratoryController {
 
         // Return a ResponseEntity with status 200 (OK) and the response body containing the laboratory DTO
         return ResponseEntity.ok(laboratoryResponseDto);
+    }
+
+    /**
+     * Endpoint to generate a badge for a laboratory.
+     *
+     * @param laboratoryId the ID of the laboratory for which to generate the badge
+     * @return a ResponseEntity containing the badge PDF as a byte array
+     */
+    @GetMapping("/{laboratoryId}/badge")
+    public ResponseEntity<byte[]> generateLaboratoryBadge(@PathVariable Long laboratoryId) {
+        // Generate the badge for the laboratory by calling the service
+        byte[] badge = laboratoryService.generateLaboratoryBadge(laboratoryId);
+
+        // Create HTTP headers to set the content type and the disposition as attachment with a filename
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.set("Content-Disposition", "attachment; filename=laboratory_" + laboratoryId + "_badge.pdf");
+
+        // Return a ResponseEntity with status 200 (OK), the headers, and the badge byte array
+        return ResponseEntity.ok().headers(headers).body(badge);
     }
 }

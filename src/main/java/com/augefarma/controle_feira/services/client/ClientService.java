@@ -69,17 +69,27 @@ public class ClientService {
         }
     }
 
+    /**
+     * Generates a badge for a client by their ID.
+     *
+     * @param clientId the ID of the client for whom to generate the badge
+     * @return a byte array representing the generated badge
+     * @throws ResourceNotFoundException if the client with the given ID is not found
+     * @throws RuntimeException if an error occurs during badge generation
+     */
     public byte[] generateClientBadge(Long clientId) {
 
         try {
             // Attempt to retrieve the client entity from the repository using the given ID
             ClientEntity client = clientRepository.getReferenceById(clientId);
 
+            // Generate the badge for the client and return it as a byte array
             return badgeService.generateBadge(client);
         } catch (EntityNotFoundException exception) {
             // If the client entity is not found, throw a custom exception indicating the resource is not found
             throw new ResourceNotFoundException("Resource not found");
         } catch (IOException | WriterException e) {
+            // If an error occurs during badge generation, throw a runtime exception
             throw new RuntimeException(e);
         }
     }
