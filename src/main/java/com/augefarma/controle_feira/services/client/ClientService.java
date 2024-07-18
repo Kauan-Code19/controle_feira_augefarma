@@ -77,6 +77,7 @@ public class ClientService {
      * @throws ResourceNotFoundException if the client with the given ID is not found
      * @throws RuntimeException if an error occurs during badge generation
      */
+    @Transactional(readOnly = true)
     public byte[] generateClientBadge(Long clientId) {
 
         try {

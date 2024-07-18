@@ -76,6 +76,7 @@ public class LaboratoryService {
      * @throws ResourceNotFoundException if the laboratory is not found
      * @throws RuntimeException if there is an error generating the badge
      */
+    @Transactional(readOnly = true)
     public byte[] generateLaboratoryBadge(Long laboratoryId) {
 
         try {

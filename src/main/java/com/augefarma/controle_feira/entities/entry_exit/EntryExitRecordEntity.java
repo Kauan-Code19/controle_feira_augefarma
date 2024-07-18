@@ -1,4 +1,4 @@
-package com.augefarma.controle_feira.entities.check_in;
+package com.augefarma.controle_feira.entities.entry_exit;
 
 import com.augefarma.controle_feira.entities.client.ClientEntity;
 import com.augefarma.controle_feira.entities.laboratory.LaboratoryEntity;
@@ -23,8 +23,8 @@ import java.time.LocalDateTime;
 @Setter
 @EqualsAndHashCode
 @Entity
-@Table(name = "Check-ins")
-public class CheckInEntity {
+@Table(name = "Entry_Exit_Records")
+public class EntryExitRecordEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +42,6 @@ public class CheckInEntity {
     @Column(name = "checkin_time", updatable = false, nullable = false)
     private LocalDateTime checkinTime;
 
-    @Column(name = "checkout_time", updatable = false)
+    @Column(name = "checkout_time")
     private LocalDateTime checkoutTime;
 }
