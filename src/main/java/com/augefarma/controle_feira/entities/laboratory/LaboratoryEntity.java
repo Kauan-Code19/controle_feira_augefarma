@@ -1,13 +1,7 @@
 package com.augefarma.controle_feira.entities.laboratory;
 
-import com.augefarma.controle_feira.entities.check_in.CheckInEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToMany;
+import com.augefarma.controle_feira.entities.entry_exit.EntryExitRecordEntity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,5 +33,6 @@ public class LaboratoryEntity {
     private String corporateReason;
 
     @OneToMany(mappedBy = "laboratoryId")
-    private List<CheckInEntity> checkIns;
+    @OrderBy("checkinTime ASC")
+    private List<EntryExitRecordEntity> checkIns;
 }

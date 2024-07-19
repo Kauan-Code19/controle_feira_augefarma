@@ -1,6 +1,6 @@
 package com.augefarma.controle_feira.entities.client;
 
-import com.augefarma.controle_feira.entities.check_in.CheckInEntity;
+import com.augefarma.controle_feira.entities.entry_exit.EntryExitRecordEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,5 +43,6 @@ public class ClientEntity {
     private String corporateReason;
 
     @OneToMany(mappedBy = "clientId")
-    private List<CheckInEntity> checkIns;
+    @OrderBy("checkinTime ASC")
+    private List<EntryExitRecordEntity> checkIns;
 }

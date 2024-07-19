@@ -1,0 +1,2 @@
+ALTER TABLE Check_ins
+ALTER COLUMN checkout_time DROP NOT NULL;
