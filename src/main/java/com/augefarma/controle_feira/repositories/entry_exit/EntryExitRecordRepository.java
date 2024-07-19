@@ -1,4 +1,4 @@
-package com.augefarma.controle_feira.repositories.checkin;
+package com.augefarma.controle_feira.repositories.entry_exit;
 
 import com.augefarma.controle_feira.entities.entry_exit.EntryExitRecordEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

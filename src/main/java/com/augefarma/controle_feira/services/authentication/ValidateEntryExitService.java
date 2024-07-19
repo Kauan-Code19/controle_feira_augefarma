@@ -4,7 +4,7 @@ import com.augefarma.controle_feira.entities.entry_exit.EntryExitRecordEntity;
 import com.augefarma.controle_feira.entities.client.ClientEntity;
 import com.augefarma.controle_feira.entities.laboratory.LaboratoryEntity;
 import com.augefarma.controle_feira.exceptions.ResourceNotFoundException;
-import com.augefarma.controle_feira.repositories.checkin.EntryExitRecordRepository;
+import com.augefarma.controle_feira.repositories.entry_exit.EntryExitRecordRepository;
 import com.augefarma.controle_feira.repositories.client.ClientRepository;
 import com.augefarma.controle_feira.repositories.laboratory.LaboratoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
