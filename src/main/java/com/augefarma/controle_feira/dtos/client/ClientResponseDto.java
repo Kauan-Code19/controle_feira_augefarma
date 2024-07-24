@@ -1,10 +1,12 @@
 package com.augefarma.controle_feira.dtos.client;
 
 import com.augefarma.controle_feira.entities.client.ClientEntity;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@EqualsAndHashCode
 @Getter
 public class ClientResponseDto {
 

@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // Allows public access to the login endpoint
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/realtime").permitAll()
                         .anyRequest().authenticated()) // Requires authentication for all other requests
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)  // Adds custom token filter
                 .build();
