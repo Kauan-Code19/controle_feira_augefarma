@@ -10,6 +10,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,4 +46,8 @@ public class EntryExitRecordEntity {
 
     @Column(name = "checkout_time")
     private LocalDateTime checkoutTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "event_segment", nullable = false, updatable = false)
+    private EventSegment eventSegment;
 }
