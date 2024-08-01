@@ -1,6 +1,7 @@
 package com.augefarma.controle_feira.controllers.authentication;
 
 import com.augefarma.controle_feira.dtos.authentication.CpfEntityDto;
+import com.augefarma.controle_feira.entities.entry_exit.EventSegment;
 import com.augefarma.controle_feira.services.authentication.ValidateEntryExitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/validate")
@@ -27,8 +29,9 @@ public class ValidateEntryExitController {
      * @return ResponseEntity with validation message
      */
     @PostMapping("/entry")
-    public ResponseEntity<String> validateEntry(@RequestBody CpfEntityDto cpfEntityDto) {
-        String message = validateEntryExitService.validateEntry(cpfEntityDto.cpf());
+    public ResponseEntity<String> validateEntry(@RequestBody CpfEntityDto cpfEntityDto,
+                                                @RequestParam EventSegment eventSegment) {
+        String message = validateEntryExitService.validateEntry(cpfEntityDto.cpf(), eventSegment);
         return ResponseEntity.ok(message);
     }
 

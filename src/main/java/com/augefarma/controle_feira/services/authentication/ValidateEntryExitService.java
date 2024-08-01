@@ -2,6 +2,7 @@ package com.augefarma.controle_feira.services.authentication;
 
 import com.augefarma.controle_feira.entities.entry_exit.EntryExitRecordEntity;
 import com.augefarma.controle_feira.entities.client.ClientEntity;
+import com.augefarma.controle_feira.entities.entry_exit.EventSegment;
 import com.augefarma.controle_feira.entities.laboratory.LaboratoryEntity;
 import com.augefarma.controle_feira.exceptions.ResourceNotFoundException;
 import com.augefarma.controle_feira.repositories.entry_exit.EntryExitRecordRepository;
@@ -41,15 +42,15 @@ public class ValidateEntryExitService {
      * @param cpf the CPF to validate
      * @return a message indicating success or failure of the check-in
      */
-    public String validateEntry(String cpf) {
+    public String validateEntry(String cpf, EventSegment eventSegment) {
         // Retrieve the entity associated with the provided CPF
         Object entity = getEntityByCpf(cpf);
 
         // Determine entity type and handle check-in accordingly
         if (entity instanceof ClientEntity) {
-            return handleClientCheckIn((ClientEntity) entity);
+            return handleClientCheckIn((ClientEntity) entity, eventSegment);
         } else if (entity instanceof LaboratoryEntity) {
-            return handleLaboratoryCheckIn((LaboratoryEntity) entity);
+            return handleLaboratoryCheckIn((LaboratoryEntity) entity, eventSegment);
         } else {
             throw new IllegalStateException("Unexpected entity type or invalid check-out state");
         }
@@ -83,13 +84,13 @@ public class ValidateEntryExitService {
      * @param clientEntity the ClientEntity to handle
      * @return a message indicating success or failure of the check-in
      */
-    private String handleClientCheckIn(ClientEntity clientEntity) {
+    private String handleClientCheckIn(ClientEntity clientEntity, EventSegment eventSegment) {
         // Retrieve the list of check-in records for the client
         List<EntryExitRecordEntity> entryExitRecordEntityList = clientEntity.getCheckIns();
 
         // Check if the client can check in based on previous records
         if (entryExitRecordEntityList.isEmpty() || lastCheckOutCompleted(entryExitRecordEntityList)) {
-            return performCheckIn(clientEntity);
+            return performCheckIn(clientEntity, eventSegment);
         } else {
             return "Access denied because the CPF "
                     + clientEntity.getCpf()
@@ -104,13 +105,13 @@ public class ValidateEntryExitService {
      * @param laboratoryEntity the LaboratoryEntity to handle
      * @return a message indicating success or failure of the check-in
      */
-    private String handleLaboratoryCheckIn(LaboratoryEntity laboratoryEntity) {
+    private String handleLaboratoryCheckIn(LaboratoryEntity laboratoryEntity, EventSegment eventSegment) {
         // Retrieve the list of check-in records for the laboratory
         List<EntryExitRecordEntity> entryExitRecordEntityList = laboratoryEntity.getCheckIns();
 
         // Check if the laboratory can check in based on previous records
         if (entryExitRecordEntityList.isEmpty() || lastCheckOutCompleted(entryExitRecordEntityList)) {
-            return performCheckIn(laboratoryEntity);
+            return performCheckIn(laboratoryEntity, eventSegment);
         } else {
             return "Access denied because the CPF "
                     + laboratoryEntity.getCpf()
@@ -183,10 +184,11 @@ public class ValidateEntryExitService {
      * @return a message indicating success or failure of the check-in
      */
     @Transactional
-    private String performCheckIn(Object entity) {
+    private String performCheckIn(Object entity, EventSegment eventSegment) {
         // Create a new entry/exit record with the current check-in time
         EntryExitRecordEntity checkIn = new EntryExitRecordEntity();
         checkIn.setCheckinTime(LocalDateTime.now());
+        checkIn.setEventSegment(eventSegment);
 
         if (entity instanceof ClientEntity) {
             // Set the client ID and update the real-time service
