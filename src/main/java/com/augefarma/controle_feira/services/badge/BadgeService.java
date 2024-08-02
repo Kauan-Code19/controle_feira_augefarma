@@ -4,11 +4,19 @@ import com.augefarma.controle_feira.entities.client.ClientEntity;
 import com.augefarma.controle_feira.entities.laboratory.LaboratoryEntity;
 import com.google.zxing.WriterException;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.awt.image.BufferedImage;
@@ -75,17 +83,65 @@ public class BadgeService {
         // Initialize Document with the PdfDocument
         Document document = new Document(pdfDocument);
 
+        // Set the page size to 9 cm x 5 cm (converted to points)
+        PageSize pageSize = new PageSize(9 * 72 / 2.54f, 5 * 72 / 2.54f);
+        pdfDocument.setDefaultPageSize(pageSize);
+        document.setMargins(0, 0, 0, 0);
+
+        // Define column widths: 60% for text, 40% for QR code
+        float columnWidth = pageSize.getWidth() * 0.6f;
+        float qrCodeWidth = pageSize.getWidth() * 0.4f;
+        float[] columnWidths = {columnWidth, qrCodeWidth};
+
+        // Create a table with two columns and set its width to 100%
+        Table table = new Table(columnWidths).setWidth(UnitValue.createPercentValue(100));
+
+        // Convert text to uppercase for consistent styling
+        String upperCaseCorporateReason = corporateReason.toUpperCase();
+        String upperCaseFullName = fullName.toUpperCase();
+
+        // Create a cell for the corporate reason and full name
+        Cell textCell = new Cell()
+                .add(new Paragraph(upperCaseCorporateReason)
+                        .setFontSize(12)
+                        .setFixedLeading(14)  // Line spacing
+                        .setTextAlignment(TextAlignment.LEFT)
+                        .setMarginBottom(4))  // Space between paragraphs
+                .add(new Paragraph(upperCaseFullName)
+                        .setFontSize(10)
+                        .setTextAlignment(TextAlignment.LEFT)
+                        .setFixedLeading(12)  // Line spacing
+                        .setMinHeight(15)  // Prevents text from being too close together
+                        .setMargin(0))  // Removes additional margin
+                .setBorder(Border.NO_BORDER)
+                .setPaddingLeft(12)  // Adds padding on the left
+                .setVerticalAlignment(VerticalAlignment.MIDDLE);  // Center content vertically
+
         // Convert the BufferedImage QR code to an iText Image
-        Image qrImage = new Image(ImageDataFactory.create(qrCodeImage, null));
+        Image qrImage = new Image(ImageDataFactory.create(qrCodeImage, null))
+                .setWidth(80)  // Fixed width for the QR code
+                .setHeight(80)
+                .setHorizontalAlignment(HorizontalAlignment.RIGHT);  // Align QR code to the right
 
-        // Add the QR code image to the document
-        document.add(qrImage);
+        // Create a cell for the QR code
+        Cell qrCodeCell = new Cell()
+                .add(qrImage)
+                .setBorder(Border.NO_BORDER)
+                .setPadding(0)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE);  // Center content vertically
 
-        // Add the full name to the document with font size 20
-        document.add(new Paragraph(fullName).setFontSize(20));
+        // Add the cells to the table
+        table.addCell(textCell);
+        table.addCell(qrCodeCell);
 
-        // Add the corporate reason to the document with font size 18
-        document.add(new Paragraph(corporateReason).setFontSize(18));
+        // Calculate margin top for vertical centering of the table
+        float marginTop = (pageSize.getHeight() - 80) / 2;
+
+        // Set fixed position for the table to ensure vertical centering
+        table.setFixedPosition(0, marginTop, pageSize.getWidth());
+
+        // Add the table to the document
+        document.add(table);
 
         // Close the document to finalize it
         document.close();
