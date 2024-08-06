@@ -1,7 +1,7 @@
 package com.augefarma.controle_feira.entities.entry_exit;
 
-import com.augefarma.controle_feira.entities.client.ClientEntity;
-import com.augefarma.controle_feira.entities.laboratory.LaboratoryEntity;
+import com.augefarma.controle_feira.entities.laboratory.LaboratoryMemberEntity;
+import com.augefarma.controle_feira.entities.pharmacy_representative.PharmacyRepresentativeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
@@ -34,12 +34,12 @@ public class EntryExitRecordEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", updatable = false)
-    private ClientEntity clientId;
+    @JoinColumn(name = "pharmacy_representative_id", updatable = false)
+    private PharmacyRepresentativeEntity pharmacyRepresentative;
 
     @ManyToOne
-    @JoinColumn(name = "laboratory_id", updatable = false)
-    private LaboratoryEntity laboratoryId;
+    @JoinColumn(name = "laboratory_member_id", updatable = false)
+    private LaboratoryMemberEntity laboratoryMember;
 
     @Column(name = "checkin_time", updatable = false, nullable = false)
     private LocalDateTime checkinTime;
