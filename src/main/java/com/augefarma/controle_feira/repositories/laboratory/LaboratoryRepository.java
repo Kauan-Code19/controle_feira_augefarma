@@ -7,5 +7,5 @@ import java.util.Optional;
 
 @Repository
 public interface LaboratoryRepository extends JpaRepository<LaboratoryEntity, Long> {
-    Optional<LaboratoryEntity> findByCpf(String cpf);
+    Optional<LaboratoryEntity> findByCorporateReason(String corporateReason);
 }
