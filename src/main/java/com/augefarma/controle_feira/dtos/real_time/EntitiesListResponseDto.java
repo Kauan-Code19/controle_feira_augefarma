@@ -1,10 +1,9 @@
 package com.augefarma.controle_feira.dtos.real_time;
 
-import com.augefarma.controle_feira.dtos.client.ClientResponseDto;
-import com.augefarma.controle_feira.dtos.laboratory.LaboratoryResponseDto;
+import com.augefarma.controle_feira.dtos.laboratory.LaboratoryMemberResponseDto;
+import com.augefarma.controle_feira.dtos.pharmacy_representative.PharmacyRepresentativeResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,27 +11,28 @@ import java.util.List;
 @Getter
 public class EntitiesListResponseDto {
 
-    private List<ClientResponseDto> clients = new ArrayList<>();
-    private List<LaboratoryResponseDto> laboratories = new ArrayList<>();
+    private List<PharmacyRepresentativeResponseDto> pharmacyRepresentatives = new ArrayList<>();
+    private List<LaboratoryMemberResponseDto> laboratoryMembers = new ArrayList<>();
 
-    public EntitiesListResponseDto(List<ClientResponseDto> clients, List<LaboratoryResponseDto> laboratories) {
-        this.clients = clients;
-        this.laboratories = laboratories;
+    public EntitiesListResponseDto(List<PharmacyRepresentativeResponseDto> pharmacyRepresentatives,
+                                   List<LaboratoryMemberResponseDto> laboratoryMembers) {
+        this.pharmacyRepresentatives = pharmacyRepresentatives;
+        this.laboratoryMembers = laboratoryMembers;
     }
 
-    public void addClient(ClientResponseDto client) {
-        clients.add(client);
+    public void addPharmacyRepresentative(PharmacyRepresentativeResponseDto pharmacyRepresentative) {
+        pharmacyRepresentatives.add(pharmacyRepresentative);
     }
 
-    public void removeClient(ClientResponseDto client) {
-        clients.remove(client);
+    public void removePharmacyRepresentative(PharmacyRepresentativeResponseDto pharmacyRepresentative) {
+        pharmacyRepresentatives.remove(pharmacyRepresentative);
     }
 
-    public void addLaboratory(LaboratoryResponseDto laboratory) {
-        laboratories.add(laboratory);
+    public void addLaboratoryMember(LaboratoryMemberResponseDto laboratoryMember) {
+        laboratoryMembers.add(laboratoryMember);
     }
 
-    public void removeLaboratory(LaboratoryResponseDto laboratory) {
-        laboratories.remove(laboratory);
+    public void removeLaboratoryMember(LaboratoryMemberResponseDto laboratoryMember) {
+        laboratoryMembers.remove(laboratoryMember);
     }
 }

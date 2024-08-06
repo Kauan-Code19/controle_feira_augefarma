@@ -12,16 +12,10 @@ public class LaboratoryResponseDto {
 
     private Long id;
 
-    private String name;
-
-    private String cpf;
-
     private String corporateReason;
 
     public LaboratoryResponseDto(LaboratoryEntity laboratory) {
         id = laboratory.getId();
-        name = laboratory.getName();
-        cpf = laboratory.getCpf();
         corporateReason = laboratory.getCorporateReason();
     }
 }
