@@ -1,13 +1,13 @@
 package com.augefarma.controle_feira.services.authentication;
 
+import com.augefarma.controle_feira.entities.laboratory.LaboratoryMemberEntity;
+import com.augefarma.controle_feira.entities.pharmacy_representative.PharmacyRepresentativeEntity;
 import com.augefarma.controle_feira.entities.entry_exit.EntryExitRecordEntity;
-import com.augefarma.controle_feira.entities.client.ClientEntity;
 import com.augefarma.controle_feira.entities.entry_exit.EventSegment;
-import com.augefarma.controle_feira.entities.laboratory.LaboratoryEntity;
 import com.augefarma.controle_feira.exceptions.ResourceNotFoundException;
 import com.augefarma.controle_feira.repositories.entry_exit.EntryExitRecordRepository;
-import com.augefarma.controle_feira.repositories.client.ClientRepository;
-import com.augefarma.controle_feira.repositories.laboratory.LaboratoryRepository;
+import com.augefarma.controle_feira.repositories.laboratory.LaboratoryMemberRepository;
+import com.augefarma.controle_feira.repositories.pharmacy_representative.PharmacyRepresentativeRepository;
 import com.augefarma.controle_feira.services.socket.RealTimeUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -20,37 +20,37 @@ import java.util.Optional;
 @Service
 public class ValidateEntryExitService {
 
-    private final ClientRepository clientRepository;
-    private final LaboratoryRepository laboratoryRepository;
+    private final PharmacyRepresentativeRepository pharmacyRepresentativeRepository;
+    private final LaboratoryMemberRepository laboratoryMemberRepository;
     private final EntryExitRecordRepository entryExitRecordRepository;
     private final RealTimeUpdateService realTimeUpdateService;
 
     @Autowired
-    public ValidateEntryExitService(ClientRepository clientRepository, LaboratoryRepository laboratoryRepository,
+    public ValidateEntryExitService(PharmacyRepresentativeRepository pharmacyRepresentativeRepository,
+                                    LaboratoryMemberRepository laboratoryMemberRepository,
                                     EntryExitRecordRepository entryExitRecordRepository,
                                     @Lazy RealTimeUpdateService realTimeUpdateService) {
-        this.clientRepository = clientRepository;
-        this.laboratoryRepository = laboratoryRepository;
+        this.pharmacyRepresentativeRepository = pharmacyRepresentativeRepository;
+        this.laboratoryMemberRepository = laboratoryMemberRepository;
         this.entryExitRecordRepository = entryExitRecordRepository;
         this.realTimeUpdateService = realTimeUpdateService;
     }
 
     /**
      * Validates and handles the entry of an entity based on its CPF.
-     * Determines if the entity is a client or laboratory and processes the check-in accordingly.
+     * Determines if the entity is a pharmacy representative or laboratory member and processes the check-in accordingly.
      *
      * @param cpf the CPF to validate
+     * @param eventSegment the event segment associated with the check-in
      * @return a message indicating success or failure of the check-in
      */
     public String validateEntry(String cpf, EventSegment eventSegment) {
-        // Retrieve the entity associated with the provided CPF
         Object entity = getEntityByCpf(cpf);
 
-        // Determine entity type and handle check-in accordingly
-        if (entity instanceof ClientEntity) {
-            return handleClientCheckIn((ClientEntity) entity, eventSegment);
-        } else if (entity instanceof LaboratoryEntity) {
-            return handleLaboratoryCheckIn((LaboratoryEntity) entity, eventSegment);
+        if (entity instanceof PharmacyRepresentativeEntity) {
+            return handlePharmacyRepresentativeCheckIn((PharmacyRepresentativeEntity) entity, eventSegment);
+        } else if (entity instanceof LaboratoryMemberEntity) {
+            return handleLaboratoryMemberCheckIn((LaboratoryMemberEntity) entity, eventSegment);
         } else {
             throw new IllegalStateException("Unexpected entity type or invalid check-out state");
         }
@@ -58,121 +58,116 @@ public class ValidateEntryExitService {
 
     /**
      * Validates and handles the exit of an entity based on its CPF.
-     * Determines if the entity is a client or laboratory and processes the check-out accordingly.
+     * Determines if the entity is a pharmacy representative or laboratory member and processes
+     * the check-out accordingly.
      *
      * @param cpf the CPF to validate
      * @return a message indicating success or failure of the check-out
      */
     public String validateExit(String cpf) {
-        // Retrieve the entity associated with the provided CPF
         Object entity = getEntityByCpf(cpf);
 
-        // Determine entity type and handle check-out accordingly
-        if (entity instanceof ClientEntity) {
-            return handleClientCheckOut((ClientEntity) entity);
-        } else if (entity instanceof LaboratoryEntity) {
-            return handleLaboratoryCheckOut((LaboratoryEntity) entity);
+        if (entity instanceof PharmacyRepresentativeEntity) {
+            return handlePharmacyRepresentativeCheckOut((PharmacyRepresentativeEntity) entity);
+        } else if (entity instanceof LaboratoryMemberEntity) {
+            return handleLaboratoryMemberCheckOut((LaboratoryMemberEntity) entity);
         } else {
             throw new IllegalStateException("Unexpected entity type or invalid check-out state");
         }
     }
 
     /**
-     * Handles the check-in process for a ClientEntity.
-     * Checks if the client is allowed to check in based on previous check-in records.
+     * Handles the check-in process for a PharmacyRepresentativeEntity.
+     * Checks if the representative can check in based on previous check-in records.
      *
-     * @param clientEntity the ClientEntity to handle
+     * @param pharmacyRepresentative the PharmacyRepresentativeEntity to handle
+     * @param eventSegment the event segment associated with the check-in
      * @return a message indicating success or failure of the check-in
      */
-    private String handleClientCheckIn(ClientEntity clientEntity, EventSegment eventSegment) {
-        // Retrieve the list of check-in records for the client
-        List<EntryExitRecordEntity> entryExitRecordEntityList = clientEntity.getCheckIns();
+    private String handlePharmacyRepresentativeCheckIn(PharmacyRepresentativeEntity pharmacyRepresentative,
+                                                       EventSegment eventSegment) {
 
-        // Check if the client can check in based on previous records
+        List<EntryExitRecordEntity> entryExitRecordEntityList = pharmacyRepresentative.getEntryExitRecords();
+
         if (entryExitRecordEntityList.isEmpty() || lastCheckOutCompleted(entryExitRecordEntityList)) {
-            return performCheckIn(clientEntity, eventSegment);
+            return performCheckIn(pharmacyRepresentative, eventSegment);
         } else {
-            return "Access denied because the CPF "
-                    + clientEntity.getCpf()
-                    + " with id " + clientEntity.getId() + " has already been granted access";
+            return "Access denied: CPF " + pharmacyRepresentative.getCpf()
+                    + " with ID " + pharmacyRepresentative.getId() + " has already been granted access";
         }
     }
 
     /**
-     * Handles the check-in process for a LaboratoryEntity.
-     * Checks if the laboratory is allowed to check in based on previous check-in records.
+     * Handles the check-in process for a LaboratoryMemberEntity.
+     * Checks if the laboratory member can check in based on previous check-in records.
      *
-     * @param laboratoryEntity the LaboratoryEntity to handle
+     * @param laboratoryMember the LaboratoryMemberEntity to handle
+     * @param eventSegment the event segment associated with the check-in
      * @return a message indicating success or failure of the check-in
      */
-    private String handleLaboratoryCheckIn(LaboratoryEntity laboratoryEntity, EventSegment eventSegment) {
-        // Retrieve the list of check-in records for the laboratory
-        List<EntryExitRecordEntity> entryExitRecordEntityList = laboratoryEntity.getCheckIns();
+    private String handleLaboratoryMemberCheckIn(LaboratoryMemberEntity laboratoryMember,
+                                                 EventSegment eventSegment) {
 
-        // Check if the laboratory can check in based on previous records
+        List<EntryExitRecordEntity> entryExitRecordEntityList = laboratoryMember.getEntryExitRecords();
+
         if (entryExitRecordEntityList.isEmpty() || lastCheckOutCompleted(entryExitRecordEntityList)) {
-            return performCheckIn(laboratoryEntity, eventSegment);
+            return performCheckIn(laboratoryMember, eventSegment);
         } else {
-            return "Access denied because the CPF "
-                    + laboratoryEntity.getCpf()
-                    + " with id " + laboratoryEntity.getId() + " has already been granted access";
+            return "Access denied: CPF " + laboratoryMember.getCpf()
+                    + " with ID " + laboratoryMember.getId() + " has already been granted access";
         }
     }
 
     /**
-     * Handles the check-out process for a ClientEntity.
-     * Verifies if the client has completed their previous check-out before allowing a new check-out.
+     * Handles the check-out process for a PharmacyRepresentativeEntity.
+     * Verifies if the representative has completed their previous check-out before allowing a new check-out.
      *
-     * @param clientEntity the ClientEntity to handle
+     * @param pharmacyRepresentative the PharmacyRepresentativeEntity to handle
      * @return a message indicating success or failure of the check-out
      */
-    private String handleClientCheckOut(ClientEntity clientEntity) {
-        // Retrieve the list of check-in records for the client
-        List<EntryExitRecordEntity> entryExitRecordEntityList = clientEntity.getCheckIns();
+    private String handlePharmacyRepresentativeCheckOut(PharmacyRepresentativeEntity pharmacyRepresentative) {
+        List<EntryExitRecordEntity> entryExitRecordEntityList = pharmacyRepresentative.getEntryExitRecords();
 
-        // Check if the client can check out based on previous records
-        if (!lastCheckOutCompleted(entryExitRecordEntityList)) {
-            return performCheckOut(entryExitRecordEntityList.get(entryExitRecordEntityList.size() - 1), clientEntity);
-        } else {
-            return "Departure denied because the CPF "
-                    + clientEntity.getCpf()
-                    + " with id " + clientEntity.getId() + " already had the exit registered";
-        }
-    }
-
-    /**
-     * Handles the check-out process for a LaboratoryEntity.
-     * Verifies if the laboratory has completed its previous check-out before allowing a new check-out.
-     *
-     * @param laboratoryEntity the LaboratoryEntity to handle
-     * @return a message indicating success or failure of the check-out
-     */
-    private String handleLaboratoryCheckOut(LaboratoryEntity laboratoryEntity) {
-        // Retrieve the list of check-in records for the laboratory
-        List<EntryExitRecordEntity> entryExitRecordEntityList = laboratoryEntity.getCheckIns();
-
-        // Check if the laboratory can check out based on previous records
         if (!lastCheckOutCompleted(entryExitRecordEntityList)) {
             return performCheckOut(entryExitRecordEntityList.get(entryExitRecordEntityList.size() - 1),
-                    laboratoryEntity);
+                    pharmacyRepresentative);
         } else {
-            return "Departure denied because the CPF "
-                    + laboratoryEntity.getCpf()
-                    + " with id " + laboratoryEntity.getId() + " already had the exit registered";
+            return "Departure denied: CPF " + pharmacyRepresentative.getCpf()
+                    + " with ID " + pharmacyRepresentative.getId() + " already had the exit registered";
+        }
+    }
+
+    /**
+     * Handles the check-out process for a LaboratoryMemberEntity.
+     * Verifies if the laboratory member has completed their previous check-out before allowing a new check-out.
+     *
+     * @param laboratoryMember the LaboratoryMemberEntity to handle
+     * @return a message indicating success or failure of the check-out
+     */
+    private String handleLaboratoryMemberCheckOut(LaboratoryMemberEntity laboratoryMember) {
+        List<EntryExitRecordEntity> entryExitRecordEntityList = laboratoryMember.getEntryExitRecords();
+
+        if (!lastCheckOutCompleted(entryExitRecordEntityList)) {
+            return performCheckOut(entryExitRecordEntityList.get(entryExitRecordEntityList.size() - 1),
+                    laboratoryMember);
+        } else {
+            return "Departure denied: CPF " + laboratoryMember.getCpf()
+                    + " with ID " + laboratoryMember.getId() + " already had the exit registered";
         }
     }
 
     /**
      * Determines if the last check-out record in the list has been completed.
      *
-     * @param entryExitRecordEntityList the list of entry/exit records
+     * @param entryExitRecordList the list of entry/exit records
      * @return true if the last check-out has a non-null checkout time, false otherwise
      */
-    private boolean lastCheckOutCompleted(List<EntryExitRecordEntity> entryExitRecordEntityList) {
-        // Get the last entry/exit record
-        EntryExitRecordEntity lastCheckIn = entryExitRecordEntityList.get(entryExitRecordEntityList.size() - 1);
+    private boolean lastCheckOutCompleted(List<EntryExitRecordEntity> entryExitRecordList) {
+        if (entryExitRecordList.isEmpty()) {
+            return false;
+        }
 
-        // Check if the checkout time is set
+        EntryExitRecordEntity lastCheckIn = entryExitRecordList.get(entryExitRecordList.size() - 1);
         return lastCheckIn.getCheckoutTime() != null;
     }
 
@@ -181,77 +176,70 @@ public class ValidateEntryExitService {
      * Creates a new entry/exit record with the current time and updates the real-time service.
      *
      * @param entity the entity to check in
+     * @param eventSegment the event segment associated with the check-in
      * @return a message indicating success or failure of the check-in
      */
     @Transactional
     private String performCheckIn(Object entity, EventSegment eventSegment) {
-        // Create a new entry/exit record with the current check-in time
-        EntryExitRecordEntity checkIn = new EntryExitRecordEntity();
-        checkIn.setCheckinTime(LocalDateTime.now());
-        checkIn.setEventSegment(eventSegment);
+        EntryExitRecordEntity entryExitRecord = new EntryExitRecordEntity();
+        entryExitRecord.setCheckinTime(LocalDateTime.now());
+        entryExitRecord.setEventSegment(eventSegment);
 
-        if (entity instanceof ClientEntity) {
-            // Set the client ID and update the real-time service
-            checkIn.setClientId((ClientEntity) entity);
-            realTimeUpdateService.addClientPresent((ClientEntity) entity);
-        } else if (entity instanceof LaboratoryEntity) {
-            // Set the laboratory ID and update the real-time service
-            checkIn.setLaboratoryId((LaboratoryEntity) entity);
-            realTimeUpdateService.addLaboratoryPresent((LaboratoryEntity) entity);
+        if (entity instanceof PharmacyRepresentativeEntity) {
+            entryExitRecord.setPharmacyRepresentative((PharmacyRepresentativeEntity) entity);
+            realTimeUpdateService.addPharmacyRepresentativePresent((PharmacyRepresentativeEntity) entity);
+        } else if (entity instanceof LaboratoryMemberEntity) {
+            entryExitRecord.setLaboratoryMember((LaboratoryMemberEntity) entity);
+            realTimeUpdateService.addLaboratoryMemberPresent((LaboratoryMemberEntity) entity);
         }
 
-        // Save the entry/exit record to the repository
-        entryExitRecordRepository.save(checkIn);
-
+        entryExitRecordRepository.save(entryExitRecord);
         return "Access granted";
     }
 
     /**
-     * Performs the check-out process for the last entry/exit record.
-     * Updates the record with the current time and notifies the real-time service.
+     * Performs the check-out process for the specified entity.
+     * Updates the latest entry/exit record with the current time and updates the real-time service.
      *
-     * @param lastCheckIn the last entry/exit record to check out
+     * @param entryExitRecord the entry/exit record to update
      * @param entity the entity to check out
      * @return a message indicating success or failure of the check-out
      */
     @Transactional
-    private String performCheckOut(EntryExitRecordEntity lastCheckIn, Object entity) {
-        // Set the checkout time to the current time
-        lastCheckIn.setCheckoutTime(LocalDateTime.now());
+    private String performCheckOut(EntryExitRecordEntity entryExitRecord, Object entity) {
+        entryExitRecord.setCheckoutTime(LocalDateTime.now());
+        entryExitRecordRepository.save(entryExitRecord);
 
-        // Save the updated entry/exit record to the repository
-        entryExitRecordRepository.save(lastCheckIn);
-
-        // Update the real-time service to reflect the departure
-        if (entity instanceof ClientEntity) {
-            realTimeUpdateService.removeClientPresent((ClientEntity) entity);
-        } else if (entity instanceof LaboratoryEntity) {
-            realTimeUpdateService.removeLaboratoryPresent((LaboratoryEntity) entity);
+        if (entity instanceof PharmacyRepresentativeEntity) {
+            realTimeUpdateService.removePharmacyRepresentativePresent((PharmacyRepresentativeEntity) entity);
+        } else if (entity instanceof LaboratoryMemberEntity) {
+            realTimeUpdateService.removeLaboratoryMemberPresent((LaboratoryMemberEntity) entity);
         }
 
-        return "Exit released";
+        return "Exit recorded successfully";
     }
 
     /**
-     * Retrieves an entity (Client or Laboratory) based on the provided CPF.
-     * Throws an exception if no entity is found for the given CPF.
+     * Retrieves an entity based on CPF from the repositories.
      *
-     * @param cpf the CPF to search for
-     * @return the corresponding ClientEntity or LaboratoryEntity
-     * @throws ResourceNotFoundException if no entity is found for the given CPF
+     * @param cpf the CPF to retrieve
+     * @return the entity if found, otherwise throws ResourceNotFoundException
      */
     @Transactional(readOnly = true)
     private Object getEntityByCpf(String cpf) {
         // Attempt to find the client by CPF
-        Optional<ClientEntity> client = clientRepository.findByCpf(cpf);
-        if (client.isPresent()) {
-            return client.get();
+        Optional<PharmacyRepresentativeEntity> pharmacyRepresentative = pharmacyRepresentativeRepository
+                .findByCpf(cpf);
+
+        if (pharmacyRepresentative.isPresent()) {
+            return pharmacyRepresentative.get();
         }
 
         // Attempt to find the laboratory by CPF
-        Optional<LaboratoryEntity> laboratory = laboratoryRepository.findByCpf(cpf);
-        if (laboratory.isPresent()) {
-            return laboratory.get();
+        Optional<LaboratoryMemberEntity> laboratoryMember = laboratoryMemberRepository.findByCpf(cpf);
+
+        if (laboratoryMember.isPresent()) {
+            return laboratoryMember.get();
         }
 
         // Throw an exception if neither entity is found
