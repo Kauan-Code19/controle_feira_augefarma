@@ -1,7 +1,7 @@
 package com.augefarma.controle_feira.services.badge;
 
-import com.augefarma.controle_feira.entities.client.ClientEntity;
-import com.augefarma.controle_feira.entities.laboratory.LaboratoryEntity;
+import com.augefarma.controle_feira.entities.laboratory.LaboratoryMemberEntity;
+import com.augefarma.controle_feira.entities.pharmacy_representative.PharmacyRepresentativeEntity;
 import com.google.zxing.WriterException;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.geom.PageSize;
@@ -36,25 +36,33 @@ public class BadgeService {
     /**
      * Generates a badge for a client.
      *
-     * @param client the client entity containing information for the badge
+     * @param pharmacyRepresentative the client entity containing information for the badge
      * @return a byte array representing the generated badge PDF
      * @throws WriterException if an error occurs during QR code generation
-     * @throws IOException if an error occurs during PDF creation
+     * @throws IOException     if an error occurs during PDF creation
      */
-    public byte[] generateBadge(ClientEntity client) throws WriterException, IOException {
-        return createBadgePDF(client.getFullName(), client.getCorporateReason(), client.getCpf());
+    public byte[] generateBadge(PharmacyRepresentativeEntity pharmacyRepresentative)
+            throws WriterException, IOException {
+        return createBadgePDF(
+                pharmacyRepresentative.getName(),
+                pharmacyRepresentative.getCorporateReason(),
+                pharmacyRepresentative.getCpf());
     }
 
     /**
      * Generates a badge for a laboratory.
      *
-     * @param laboratory the laboratory entity containing information for the badge
+     * @param laboratoryMember the laboratory entity containing information for the badge
      * @return a byte array representing the generated badge PDF
      * @throws WriterException if an error occurs during QR code generation
-     * @throws IOException if an error occurs during PDF creation
+     * @throws IOException     if an error occurs during PDF creation
      */
-    public byte[] generateBadge(LaboratoryEntity laboratory) throws WriterException, IOException {
-        return createBadgePDF(laboratory.getName(), laboratory.getCorporateReason(), laboratory.getCpf());
+    public byte[] generateBadge(LaboratoryMemberEntity laboratoryMember)
+            throws WriterException, IOException {
+        return createBadgePDF(
+                laboratoryMember.getName(),
+                laboratoryMember.getLaboratory().getCorporateReason(),
+                laboratoryMember.getCpf());
     }
 
     /**
