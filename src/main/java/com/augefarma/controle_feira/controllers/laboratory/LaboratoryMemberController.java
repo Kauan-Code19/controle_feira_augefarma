@@ -8,14 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/laboratory-member")
@@ -90,5 +86,15 @@ public class LaboratoryMemberController {
 
         // Return a ResponseEntity with status 200 (OK), headers, and the badge byte array
         return ResponseEntity.ok().headers(headers).body(badge);
+    }
+
+    @GetMapping("/search-by-name-or-cpf")
+    public ResponseEntity<List<LaboratoryMemberResponseDto>> getLaboratoryByNameOrCpf(
+            @RequestParam String nameOrCpf) {
+
+        List<LaboratoryMemberResponseDto> laboratoryMembers = laboratoryMemberService
+                .getLaboratoryMemberByNameOrCpf(nameOrCpf);
+
+        return ResponseEntity.ok(laboratoryMembers);
     }
 }
