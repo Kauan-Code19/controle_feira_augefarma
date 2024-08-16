@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PharmacyRepresentativeService {
@@ -100,6 +102,47 @@ public class PharmacyRepresentativeService {
         } catch (IOException | WriterException e) {
             // If an error occurs during badge generation, throw a runtime exception
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Retrieves a list of Pharmacy Representatives by their name or CPF. If the input is a CPF,
+     * it returns a list containing one Pharmacy Representative. If the input is a name,
+     * it returns all Pharmacy Representatives with that name.
+     *
+     * @param nameOrCpf the name or CPF of the Pharmacy Representative to search for
+     * @return a list of PharmacyRepresentativeResponseDto containing the found Pharmacy Representatives
+     * @throws ResourceNotFoundException if no Pharmacy Representatives are found
+     */
+    @Transactional(readOnly = true)
+    public List<PharmacyRepresentativeResponseDto> getPharmacyRepresentativeByNameOrCpf(String nameOrCpf) {
+
+        // Regex to verify if the provided value is a valid CPF
+        String cpfRegex = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$";
+
+        if (nameOrCpf.matches(cpfRegex)) {
+            // If the value is a CPF
+            PharmacyRepresentativeEntity pharmacyRepresentative = pharmacyRepresentativeRepository
+                    .findByCpf(nameOrCpf)
+                    .orElseThrow(() -> new ResourceNotFoundException("Pharmacy Representative not found"));
+
+            // Return a list with only one element
+            return List.of(new PharmacyRepresentativeResponseDto(pharmacyRepresentative));
+
+        } else {
+            // If the value is a name
+            List<PharmacyRepresentativeEntity> pharmacyRepresentatives = pharmacyRepresentativeRepository
+                    .findByName(nameOrCpf);
+
+            if (pharmacyRepresentatives.isEmpty()) {
+                // If no representatives are found with the provided name
+                throw new ResourceNotFoundException("Pharmacy Representative not found");
+            }
+
+            // Convert the list of entities to a list of DTOs and return
+            return pharmacyRepresentatives.stream()
+                    .map(PharmacyRepresentativeResponseDto::new)
+                    .collect(Collectors.toList());
         }
     }
 }

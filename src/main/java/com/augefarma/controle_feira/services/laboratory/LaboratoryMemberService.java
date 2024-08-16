@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LaboratoryMemberService {
@@ -104,5 +106,35 @@ public class LaboratoryMemberService {
             // Throw a runtime exception if there is an error generating the badge
             throw new RuntimeException(e);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<LaboratoryMemberResponseDto> getLaboratoryMemberByNameOrCpf(String nameOrCpf) {
+
+        String cpfRegex = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$";
+
+        if (nameOrCpf.matches(cpfRegex)) {
+            // If the value is a CPF
+            LaboratoryMemberEntity laboratoryMember = laboratoryMemberRepository
+                    .findByCpf(nameOrCpf)
+                    .orElseThrow(() -> new ResourceNotFoundException("Laboratory Member not found"));
+
+            // Return a list with only one element
+            return List.of(new LaboratoryMemberResponseDto(laboratoryMember));
+        }
+
+        // If the value is a name
+        List<LaboratoryMemberEntity> laboratoryMembers = laboratoryMemberRepository
+                .findByName(nameOrCpf);
+
+        if (laboratoryMembers.isEmpty()) {
+            // If no representatives are found with the provided name
+            throw new ResourceNotFoundException("Laboratory Member not found");
+        }
+
+        // Convert the list of entities to a list of DTOs and return
+        return laboratoryMembers.stream()
+                .map(LaboratoryMemberResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

@@ -8,14 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/pharmacy-representative")
@@ -91,5 +87,24 @@ public class PharmacyRepresentativeController {
 
         // Return a ResponseEntity with status 200 (OK), headers, and the badge byte array
         return ResponseEntity.ok().headers(headers).body(badge);
+    }
+
+    /**
+     * Endpoint to retrieve pharmacy representatives by name or CPF.
+     *
+     * @param nameOrCpf the name or CPF of the pharmacy representative to search for
+     * @return a ResponseEntity with status 200 (OK) and the body containing a list of matching pharmacy representative
+     * response DTOs
+     */
+    @GetMapping("/search-by-name-or-cpf")
+    public ResponseEntity<List<PharmacyRepresentativeResponseDto>> getPharmacyRepresentativeByNameOrCpf(
+            @RequestParam String nameOrCpf) {
+
+        // Retrieve pharmacy representatives matching the name or CPF
+        List<PharmacyRepresentativeResponseDto> pharmacyRepresentatives = pharmacyRepresentativeService
+                .getPharmacyRepresentativeByNameOrCpf(nameOrCpf);
+
+        // Return a ResponseEntity with status 200 (OK) and the response body
+        return ResponseEntity.ok(pharmacyRepresentatives);
     }
 }
