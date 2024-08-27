@@ -40,7 +40,7 @@ public class FlywayConfig {
                 .dataSource(dataSource) // Define o DataSource a ser usado pelo Flyway
 
                 // Define as localizações das migrações: classepath e a localização dinâmica
-                .locations("classpath:db/migration", location)
+                .locations(location)
 
                 .load(); // Carrega a configuração do Flyway
 
