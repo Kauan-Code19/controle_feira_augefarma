@@ -1,6 +1,7 @@
 package com.augefarma.controle_feira.controllers.authentication;
 
 import com.augefarma.controle_feira.dtos.authentication.CpfEntityDto;
+import com.augefarma.controle_feira.dtos.authentication.validate_entry_exit.ValidateEntryExitResponseDto;
 import com.augefarma.controle_feira.entities.entry_exit.EventSegment;
 import com.augefarma.controle_feira.services.authentication.ValidateEntryExitService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,12 @@ public class ValidateEntryExitController {
      * @return ResponseEntity with validation message
      */
     @PostMapping("/entry")
-    public ResponseEntity<String> validateEntry(@RequestBody CpfEntityDto cpfEntityDto,
-                                                @RequestParam EventSegment eventSegment) {
-        String message = validateEntryExitService.validateEntry(cpfEntityDto.cpf(), eventSegment);
-        return ResponseEntity.ok(message);
+    public ResponseEntity<ValidateEntryExitResponseDto> validateEntry(@RequestBody CpfEntityDto cpfEntityDto,
+                                                                      @RequestParam EventSegment eventSegment) {
+        ValidateEntryExitResponseDto validateEntryExitResponseDto = validateEntryExitService
+                .validateEntry(cpfEntityDto.cpf(), eventSegment);
+
+        return ResponseEntity.ok(validateEntryExitResponseDto);
     }
 
     /**
@@ -42,8 +45,8 @@ public class ValidateEntryExitController {
      * @return ResponseEntity with validation message
      */
     @PostMapping("/exit")
-    public ResponseEntity<String> validateExit(@RequestBody CpfEntityDto cpfEntityDto) {
-        String message = validateEntryExitService.validateExit(cpfEntityDto.cpf());
-        return ResponseEntity.ok(message);
+    public ResponseEntity<ValidateEntryExitResponseDto> validateExit(@RequestBody CpfEntityDto cpfEntityDto) {
+        ValidateEntryExitResponseDto validateEntryExitResponseDto = validateEntryExitService.validateExit(cpfEntityDto.cpf());
+        return ResponseEntity.ok(validateEntryExitResponseDto);
     }
 }
