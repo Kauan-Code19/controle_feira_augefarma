@@ -50,11 +50,9 @@ public class ValidateEntryExitService {
 
         if (entity instanceof PharmacyRepresentativeEntity) {
             return handlePharmacyRepresentativeCheckIn((PharmacyRepresentativeEntity) entity, eventSegment);
-        } else if (entity instanceof LaboratoryMemberEntity) {
-            return handleLaboratoryMemberCheckIn((LaboratoryMemberEntity) entity, eventSegment);
-        } else {
-            throw new IllegalStateException("Unexpected entity type or invalid check-out state");
         }
+
+        return handleLaboratoryMemberCheckIn((LaboratoryMemberEntity) entity, eventSegment);
     }
 
     /**
@@ -70,11 +68,9 @@ public class ValidateEntryExitService {
 
         if (entity instanceof PharmacyRepresentativeEntity) {
             return handlePharmacyRepresentativeCheckOut((PharmacyRepresentativeEntity) entity);
-        } else if (entity instanceof LaboratoryMemberEntity) {
-            return handleLaboratoryMemberCheckOut((LaboratoryMemberEntity) entity);
-        } else {
-            throw new IllegalStateException("Unexpected entity type or invalid check-out state");
         }
+
+        return handleLaboratoryMemberCheckOut((LaboratoryMemberEntity) entity);
     }
 
     /**
@@ -92,10 +88,10 @@ public class ValidateEntryExitService {
 
         if (entryExitRecordEntityList.isEmpty() || lastCheckOutCompleted(entryExitRecordEntityList)) {
             return performCheckIn(pharmacyRepresentative, eventSegment);
-        } else {
-            return new ValidateEntryExitResponseDto("Access denied: CPF " + pharmacyRepresentative.getCpf()
-                    + " with ID " + pharmacyRepresentative.getId() + " has already been granted access");
         }
+
+        return new ValidateEntryExitResponseDto("Access denied: CPF " + pharmacyRepresentative.getCpf()
+                    + " with ID " + pharmacyRepresentative.getId() + " has already been granted access");
     }
 
     /**
@@ -113,10 +109,10 @@ public class ValidateEntryExitService {
 
         if (entryExitRecordEntityList.isEmpty() || lastCheckOutCompleted(entryExitRecordEntityList)) {
             return performCheckIn(laboratoryMember, eventSegment);
-        } else {
-            return new ValidateEntryExitResponseDto("Access denied: CPF " + laboratoryMember.getCpf()
-                    + " with ID " + laboratoryMember.getId() + " has already been granted access");
         }
+
+        return new ValidateEntryExitResponseDto("Access denied: CPF " + laboratoryMember.getCpf()
+                    + " with ID " + laboratoryMember.getId() + " has already been granted access");
     }
 
     /**
@@ -126,16 +122,17 @@ public class ValidateEntryExitService {
      * @param pharmacyRepresentative the PharmacyRepresentativeEntity to handle
      * @return a message indicating success or failure of the check-out
      */
-    private ValidateEntryExitResponseDto handlePharmacyRepresentativeCheckOut(PharmacyRepresentativeEntity pharmacyRepresentative) {
+    private ValidateEntryExitResponseDto handlePharmacyRepresentativeCheckOut(PharmacyRepresentativeEntity
+                                                                                      pharmacyRepresentative) {
         List<EntryExitRecordEntity> entryExitRecordEntityList = pharmacyRepresentative.getEntryExitRecords();
 
-        if (!lastCheckOutCompleted(entryExitRecordEntityList)) {
-            return performCheckOut(entryExitRecordEntityList.get(entryExitRecordEntityList.size() - 1),
-                    pharmacyRepresentative);
-        } else {
+        if (entryExitRecordEntityList.isEmpty() || lastCheckOutCompleted(entryExitRecordEntityList)) {
             return new ValidateEntryExitResponseDto("Departure denied: CPF " + pharmacyRepresentative.getCpf()
                     + " with ID " + pharmacyRepresentative.getId() + " already had the exit registered");
         }
+
+        return performCheckOut(entryExitRecordEntityList.get(entryExitRecordEntityList
+                .size() - 1), pharmacyRepresentative);
     }
 
     /**
@@ -148,13 +145,12 @@ public class ValidateEntryExitService {
     private ValidateEntryExitResponseDto handleLaboratoryMemberCheckOut(LaboratoryMemberEntity laboratoryMember) {
         List<EntryExitRecordEntity> entryExitRecordEntityList = laboratoryMember.getEntryExitRecords();
 
-        if (!lastCheckOutCompleted(entryExitRecordEntityList)) {
-            return performCheckOut(entryExitRecordEntityList.get(entryExitRecordEntityList.size() - 1),
-                    laboratoryMember);
-        } else {
+        if (entryExitRecordEntityList.isEmpty() || lastCheckOutCompleted(entryExitRecordEntityList)) {
             return new ValidateEntryExitResponseDto("Departure denied: CPF " + laboratoryMember.getCpf()
                     + " with ID " + laboratoryMember.getId() + " already had the exit registered");
         }
+
+        return performCheckOut(entryExitRecordEntityList.get(entryExitRecordEntityList.size() - 1), laboratoryMember);
     }
 
     /**
@@ -164,10 +160,6 @@ public class ValidateEntryExitService {
      * @return true if the last check-out has a non-null checkout time, false otherwise
      */
     private boolean lastCheckOutCompleted(List<EntryExitRecordEntity> entryExitRecordList) {
-        if (entryExitRecordList.isEmpty()) {
-            return false;
-        }
-
         EntryExitRecordEntity lastCheckIn = entryExitRecordList.get(entryExitRecordList.size() - 1);
         return lastCheckIn.getCheckoutTime() != null;
     }
@@ -189,7 +181,9 @@ public class ValidateEntryExitService {
         if (entity instanceof PharmacyRepresentativeEntity) {
             entryExitRecord.setPharmacyRepresentative((PharmacyRepresentativeEntity) entity);
             realTimeUpdateService.addPharmacyRepresentativePresent((PharmacyRepresentativeEntity) entity);
-        } else if (entity instanceof LaboratoryMemberEntity) {
+        }
+
+        if (entity instanceof LaboratoryMemberEntity) {
             entryExitRecord.setLaboratoryMember((LaboratoryMemberEntity) entity);
             realTimeUpdateService.addLaboratoryMemberPresent((LaboratoryMemberEntity) entity);
         }
@@ -213,7 +207,9 @@ public class ValidateEntryExitService {
 
         if (entity instanceof PharmacyRepresentativeEntity) {
             realTimeUpdateService.removePharmacyRepresentativePresent((PharmacyRepresentativeEntity) entity);
-        } else if (entity instanceof LaboratoryMemberEntity) {
+        }
+
+        if (entity instanceof LaboratoryMemberEntity) {
             realTimeUpdateService.removeLaboratoryMemberPresent((LaboratoryMemberEntity) entity);
         }
 
