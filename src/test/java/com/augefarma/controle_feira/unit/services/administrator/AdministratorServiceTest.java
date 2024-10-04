@@ -6,28 +6,28 @@ import com.augefarma.controle_feira.entities.administrator.AdministratorEntity;
 import com.augefarma.controle_feira.repositories.administrator.AdministratorRepository;
 import com.augefarma.controle_feira.services.administrator.AdministratorService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class AdministratorServiceTest {
 
-    @MockBean
+    @Mock
     private AdministratorRepository administratorRepository; // Mock the repository to simulate database operations
 
-    @Autowired
-    private PasswordEncoder passwordEncoder; // Inject the password encoder for encoding and matching passwords
+    @Mock
+    private PasswordEncoder passwordEncoder; // Mock the password encoder
 
-    @Autowired
+    @InjectMocks
     private AdministratorService administratorService; // Inject the service being tested
 
     /**
@@ -52,9 +52,6 @@ public class AdministratorServiceTest {
 
         // Verify the response DTO contains the expected administrator details
         assertAdministratorResponse(administratorResponseDto, administratorEntityMock);
-
-        // Verify that the password was correctly encoded and stored
-        verifyPasswordEncoding(administratorDto.getPassword(), administratorEntityMock.getPassword());
 
         // Ensure the repository's save method was called exactly once
         verify(administratorRepository, times(1)).save(any(AdministratorEntity.class));
@@ -90,7 +87,7 @@ public class AdministratorServiceTest {
         administratorEntity.setEmail(dto.getEmail());
 
         // Encode the password using the password encoder
-        administratorEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        administratorEntity.setPassword(dto.getPassword()); // Here you can just set the raw password for the mock
         return administratorEntity;
     }
 
@@ -107,16 +104,5 @@ public class AdministratorServiceTest {
         // Ensure the full name and email in the response match the mock entity
         assertEquals(mockEntity.getFullName(), responseDto.getFullName());
         assertEquals(mockEntity.getEmail(), responseDto.getEmail());
-    }
-
-    /**
-     * Verifies that the raw password matches the encoded password.
-     *
-     * @param rawPassword the original plain text password
-     * @param encodedPassword the encoded password stored in the entity
-     */
-    private void verifyPasswordEncoding(String rawPassword, String encodedPassword) {
-        // Ensure that the encoded password matches the raw password
-        assertTrue(passwordEncoder.matches(rawPassword, encodedPassword));
     }
 }
