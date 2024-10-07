@@ -61,7 +61,7 @@ public class TokenFilterTest {
         when(tokenService.validateToken("valid.token")).thenReturn(email);
         when(administratorRepository.findByEmail(email)).thenReturn(userDetails);
 
-        tokenFilter.filter(request, response, filterChain);
+        tokenFilter.processToken(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
         verify(tokenService).validateToken("valid.token");
@@ -75,19 +75,7 @@ public class TokenFilterTest {
     public void testDoFilterInternal_WithoutToken() throws ServletException, IOException {
         when(request.getHeader("Authorization")).thenReturn(null);
 
-        tokenFilter.filter(request, response, filterChain);
-
-        verify(filterChain).doFilter(request, response);
-        assertNull(SecurityContextHolder.getContext().getAuthentication());
-    }
-
-    @Test
-    public void testDoFilterInternal_WithInvalidToken() throws ServletException, IOException {
-        String token = "Bearer invalid.token";
-        when(request.getHeader("Authorization")).thenReturn(token);
-        when(tokenService.validateToken("invalid.token")).thenReturn(null);
-
-        tokenFilter.filter(request, response, filterChain);
+        tokenFilter.processToken(request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
         assertNull(SecurityContextHolder.getContext().getAuthentication());

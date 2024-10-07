@@ -2,6 +2,7 @@ package com.augefarma.controle_feira.config.security;
 
 import com.augefarma.controle_feira.services.authorization.component.TokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -22,9 +24,13 @@ public class SecurityConfig {
 
     private final TokenFilter tokenFilter;
 
+    @Qualifier("delegatedAuthenticationEntryPoint")
+    private final AuthenticationEntryPoint authEntryPoint;
+
     @Autowired
-    public SecurityConfig(TokenFilter tokenFilter) {
+    public SecurityConfig(TokenFilter tokenFilter, AuthenticationEntryPoint authEntryPoint) {
         this.tokenFilter = tokenFilter;
+        this.authEntryPoint = authEntryPoint;
     }
 
     /**
@@ -45,6 +51,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/realtime").permitAll()
                         .anyRequest().authenticated()) // Requires authentication for all other requests
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(authEntryPoint))  // Handles authentication errors
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)  // Adds custom token filter
                 .build();
     }

@@ -38,30 +38,27 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        processToken(request, response, filterChain);
+    }
 
+    public void processToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         var token = this.recoverToken(request); // Retrieve the token from the request
 
         if (token != null) {
             var email = tokenService.validateToken(token); // Validate the token and get the associated email
 
-            if (email != null) {
-                UserDetails userDetails = administratorRepository.findByEmail(email); // Retrieve user details by email
+            UserDetails userDetails = administratorRepository.findByEmail(email); // Retrieve user details by email
 
-                // Create authentication object and set it in the security context
-                var authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
-                        userDetails.getAuthorities());
+            // Create authentication object and set it in the security context
+            var authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
+                    userDetails.getAuthorities());
 
-                // Set authentication in the security context
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+            // Set authentication in the security context
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response); // Continue with the filter chain
-    }
-
-    public void filter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        doFilterInternal(request, response, filterChain);
     }
 
     /**
