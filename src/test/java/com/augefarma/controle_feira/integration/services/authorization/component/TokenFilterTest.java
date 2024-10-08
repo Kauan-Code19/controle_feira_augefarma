@@ -46,18 +46,27 @@ public class TokenFilterTest {
 
     @BeforeEach
     public void setUp() {
+        // Clear the security context before each test
         SecurityContextHolder.clearContext();
+
+        // Initialize ObjectMapper for JSON handling
         this.objectMapper = new ObjectMapper();
-        this.validToken = tokenService.generateTokenAdministrator(createAndSaveAdministrator("Kauan Pereira",
-                "pkauprofissional@gmail.com", administratorPassword));
+
+        // Generate a valid token for the administrator and store it for use in tests
+        this.validToken = tokenService.generateTokenAdministrator(
+                createAndSaveAdministrator("Kauan Pereira", "pkauprofissional@gmail.com",
+                        administratorPassword));
     }
 
     @Test
     public void testValidTokenAuthentication() throws Exception {
+        // Create a LaboratoryDto object
         LaboratoryDto laboratoryDto = new LaboratoryDto("VR Lima");
 
+        // Convert the LaboratoryDto object to JSON
         String laboratoryDtoJson = objectMapper.writeValueAsString(laboratoryDto);
 
+        // Perform a POST request with a valid token and expect the response status to be "Created"
         mockMvc.perform(MockMvcRequestBuilders.post("/laboratory")
                         .content(laboratoryDtoJson)
                         .header("Authorization", "Bearer " + validToken)
@@ -67,23 +76,31 @@ public class TokenFilterTest {
 
     @Test
     public void testWithoutToken() throws Exception {
+        // Create a LaboratoryDto object
         LaboratoryDto laboratoryDto = new LaboratoryDto("VR Lima");
 
+        // Convert the LaboratoryDto object to JSON
         String laboratoryDtoJson = objectMapper.writeValueAsString(laboratoryDto);
 
+        // Perform a POST request without a token and expect the response status to be "Unauthorized"
         mockMvc.perform(MockMvcRequestBuilders.post("/laboratory")
                         .content(laboratoryDtoJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
+    // Helper method to create and save an administrator entity in the database
     private AdministratorEntity createAndSaveAdministrator(String fullName, String email, String rawPassword) {
         AdministratorEntity administrator = new AdministratorEntity();
 
+        // Set administrator details
         administrator.setFullName(fullName);
         administrator.setEmail(email);
+
+        // Encode the password before saving
         administrator.setPassword(passwordEncoder.encode(rawPassword));
 
+        // Save the administrator entity in the repository
         administratorRepository.save(administrator);
         return administrator;
     }
