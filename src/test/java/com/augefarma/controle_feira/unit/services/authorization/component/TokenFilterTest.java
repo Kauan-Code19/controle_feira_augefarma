@@ -17,6 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,7 +54,8 @@ public class TokenFilterTest {
     }
 
     @Test
-    public void testDoFilterInternal_WithValidToken() throws ServletException, IOException {
+    public void testDoFilterInternal_WithValidToken() throws ServletException, IOException, NoSuchMethodException,
+            InvocationTargetException, IllegalAccessException {
         String token = "Bearer valid.token";
         String email = "admin@test.com";
         UserDetails userDetails = mock(UserDetails.class);
@@ -61,7 +64,11 @@ public class TokenFilterTest {
         when(tokenService.validateToken("valid.token")).thenReturn(email);
         when(administratorRepository.findByEmail(email)).thenReturn(userDetails);
 
-        tokenFilter.processToken(request, response, filterChain);
+        Method method = TokenFilter.class.getDeclaredMethod("doFilterInternal", HttpServletRequest.class,
+                HttpServletResponse.class, FilterChain.class);
+        method.setAccessible(true);
+
+        method.invoke(tokenFilter, request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
         verify(tokenService).validateToken("valid.token");
@@ -72,10 +79,15 @@ public class TokenFilterTest {
     }
 
     @Test
-    public void testDoFilterInternal_WithoutToken() throws ServletException, IOException {
+    public void testDoFilterInternal_WithoutToken() throws ServletException, IOException, InvocationTargetException,
+            IllegalAccessException, NoSuchMethodException {
         when(request.getHeader("Authorization")).thenReturn(null);
 
-        tokenFilter.processToken(request, response, filterChain);
+        Method method = TokenFilter.class.getDeclaredMethod("doFilterInternal", HttpServletRequest.class,
+                HttpServletResponse.class, FilterChain.class);
+        method.setAccessible(true);
+
+        method.invoke(tokenFilter, request, response, filterChain);
 
         verify(filterChain).doFilter(request, response);
         assertNull(SecurityContextHolder.getContext().getAuthentication());
