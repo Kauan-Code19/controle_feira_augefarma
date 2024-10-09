@@ -258,7 +258,8 @@ public class ValidateEntryExitServiceTest {
         setupPharmacyRepresentativeMock(this.cpfPharmacyRepresentative, pharmacyRepresentative);
 
         // Create the expected response DTO for an exit denied scenario
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Exit not found");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto(
+                generateExitDeniedMessage(pharmacyRepresentative));
         // Call the service method to validate the exit
         ValidateEntryExitResponseDto actualResponse = validateEntryExitService
                 .validateExit(this.cpfPharmacyRepresentative);
@@ -282,7 +283,8 @@ public class ValidateEntryExitServiceTest {
         setupLaboratoryMemberMock(this.cpfLaboratoryMember, laboratoryMember);
 
         // Create the expected response DTO for an exit denied scenario
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Exit not found");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto(
+                generateExitDeniedMessage(laboratoryMember));
         // Call the service method to validate the exit
         ValidateEntryExitResponseDto actualResponse = validateEntryExitService
                 .validateExit(this.cpfLaboratoryMember);
