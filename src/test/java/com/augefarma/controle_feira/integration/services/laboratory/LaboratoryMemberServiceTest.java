@@ -122,6 +122,10 @@ public class LaboratoryMemberServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> {
             laboratoryMemberService.getLaboratoryMemberById(999L); // Non-existent ID
         });
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            laboratoryMemberService.generateLaboratoryMemberBadge(999L); // Non-existent ID
+        });
     }
 
     @Test
