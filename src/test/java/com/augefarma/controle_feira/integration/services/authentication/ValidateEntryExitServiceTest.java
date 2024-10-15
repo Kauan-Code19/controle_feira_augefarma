@@ -8,6 +8,7 @@ import com.augefarma.controle_feira.entities.laboratory.LaboratoryEntity;
 import com.augefarma.controle_feira.entities.laboratory.LaboratoryMemberEntity;
 import com.augefarma.controle_feira.entities.pharmacy_representative.PharmacyRepresentativeEntity;
 import com.augefarma.controle_feira.exceptions.ResourceNotFoundException;
+import com.augefarma.controle_feira.repositories.entry_exit.EntryExitRecordRepository;
 import com.augefarma.controle_feira.repositories.laboratory.LaboratoryMemberRepository;
 import com.augefarma.controle_feira.repositories.laboratory.LaboratoryRepository;
 import com.augefarma.controle_feira.repositories.pharmacy_representative.PharmacyRepresentativeRepository;
@@ -50,6 +51,9 @@ public class ValidateEntryExitServiceTest {
     private RealTimeUpdateService realTimeUpdateService;
 
     @Autowired
+    private EntryExitRecordRepository entryExitRecordRepository;
+
+    @Autowired
     private ValidateEntryExitService validateEntryExitService;
 
     @Test
@@ -76,6 +80,8 @@ public class ValidateEntryExitServiceTest {
         PharmacyRepresentativeEntity pharmacyRepresentative = createPharmacyRepresentativeWithCheckOutNotCompleted();
 
         CpfEntityDto cpfEntityDto = new CpfEntityDto(pharmacyRepresentative.getCpf()); // Create DTO for CPF
+
+        realTimeUpdateService.addPharmacyRepresentativePresent(pharmacyRepresentative);
 
         // Expected response for successful exit recording
         ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Exit recorded successfully");
@@ -114,6 +120,9 @@ public class ValidateEntryExitServiceTest {
 
         // Expected response for successful exit recording
         ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Exit recorded successfully");
+
+        realTimeUpdateService.addLaboratoryMemberPresent(laboratoryMember);
+
         // Call the validateExit method
         ValidateEntryExitResponseDto deniedMessage = validateEntryExitService
                 .validateExit(cpfEntityDto.cpf());

@@ -2,6 +2,8 @@ package com.augefarma.controle_feira.controllers.exception;
 
 import com.augefarma.controle_feira.dtos.exception.CustomErrorDto;
 import com.augefarma.controle_feira.dtos.exception.ValidationErrorDto;
+import com.augefarma.controle_feira.exceptions.EntityAlreadyPresentException;
+import com.augefarma.controle_feira.exceptions.EntityNotPresentException;
 import com.augefarma.controle_feira.exceptions.InvalidCredentialsException;
 import com.augefarma.controle_feira.exceptions.JWTGenerationException;
 import com.augefarma.controle_feira.exceptions.ResourceNotFoundException;
@@ -130,6 +132,28 @@ public class ExceptionHandlerController  extends ResponseEntityExceptionHandler 
                 status.value(), exception.getMessage(), request.getRequestURI());
 
         // Return a ResponseEntity with the error details and the HTTP status
+        return ResponseEntity.status(status).body(customErrorDto);
+    }
+
+    @ExceptionHandler(EntityAlreadyPresentException.class)
+    public ResponseEntity<CustomErrorDto> entityReadyPresent(EntityAlreadyPresentException exception,
+                                                                   HttpServletRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        CustomErrorDto customErrorDto = new CustomErrorDto(Instant.now(),
+                status.value(), exception.getMessage(), request.getRequestURI());
+
+        return ResponseEntity.status(status).body(customErrorDto);
+    }
+
+    @ExceptionHandler(EntityNotPresentException.class)
+    public ResponseEntity<CustomErrorDto> entityNotPresent(EntityNotPresentException exception,
+                                                             HttpServletRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        CustomErrorDto customErrorDto = new CustomErrorDto(Instant.now(),
+                status.value(), exception.getMessage(), request.getRequestURI());
+
         return ResponseEntity.status(status).body(customErrorDto);
     }
 }
