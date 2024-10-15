@@ -7,6 +7,8 @@ import com.augefarma.controle_feira.dtos.real_time.EntitiesListResponseDto;
 import com.augefarma.controle_feira.entities.laboratory.LaboratoryMemberEntity;
 import com.augefarma.controle_feira.entities.pharmacy_representative.PharmacyRepresentativeEntity;
 import com.augefarma.controle_feira.entities.entry_exit.EntryExitRecordEntity;
+import com.augefarma.controle_feira.exceptions.EntityAlreadyPresentException;
+import com.augefarma.controle_feira.exceptions.EntityNotPresentException;
 import com.augefarma.controle_feira.repositories.entry_exit.EntryExitRecordRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,11 +51,14 @@ public class RealTimeUpdateService {
                 new PharmacyRepresentativeResponseDto(pharmacyRepresentative);
 
         // Check if the representative is already in the list
-        if (!entitiesListResponseDto.getPharmacyRepresentatives().contains(pharmacyRepresentativeResponseDto)) {
-            // Add the representative to the list of present representatives
-            entitiesListResponseDto.addPharmacyRepresentative(pharmacyRepresentativeResponseDto);
-            publishUpdateEvent(); // Publish an update event with the current state
+        if (entitiesListResponseDto.getPharmacyRepresentatives().contains(pharmacyRepresentativeResponseDto)) {
+            throw new EntityAlreadyPresentException(
+                    "The entity is already present and cannot be added again.");
         }
+
+        // Add the representative to the list of present representatives
+        entitiesListResponseDto.addPharmacyRepresentative(pharmacyRepresentativeResponseDto);
+        publishUpdateEvent(); // Publish an update event with the current state
     }
 
     /**
@@ -68,11 +73,13 @@ public class RealTimeUpdateService {
                 new PharmacyRepresentativeResponseDto(pharmacyRepresentative);
 
         // Check if the representative is in the list
-        if (entitiesListResponseDto.getPharmacyRepresentatives().contains(pharmacyRepresentativeResponseDto)) {
-            // Remove the representative from the list of present representatives
-            entitiesListResponseDto.removePharmacyRepresentative(pharmacyRepresentativeResponseDto);
-            publishUpdateEvent(); // Publish an update event with the current state
+        if (!entitiesListResponseDto.getPharmacyRepresentatives().contains(pharmacyRepresentativeResponseDto)) {
+            throw new EntityNotPresentException("The entity is not present and cannot be removed.");
         }
+
+        // Remove the representative from the list of present representatives
+        entitiesListResponseDto.removePharmacyRepresentative(pharmacyRepresentativeResponseDto);
+        publishUpdateEvent(); // Publish an update event with the current state
     }
 
     /**
@@ -87,11 +94,14 @@ public class RealTimeUpdateService {
                 new LaboratoryMemberResponseDto(laboratoryMemberEntity);
 
         // Check if the laboratory member is already in the list
-        if (!entitiesListResponseDto.getLaboratoryMembers().contains(laboratoryMemberResponseDto)) {
-            // Add the laboratory member to the list of present members
-            entitiesListResponseDto.addLaboratoryMember(laboratoryMemberResponseDto);
-            publishUpdateEvent(); // Publish an update event with the current state
+        if (entitiesListResponseDto.getLaboratoryMembers().contains(laboratoryMemberResponseDto)) {
+            throw new EntityAlreadyPresentException(
+                    "The entity is already present and cannot be added again.");
         }
+
+        // Add the laboratory member to the list of present members
+        entitiesListResponseDto.addLaboratoryMember(laboratoryMemberResponseDto);
+        publishUpdateEvent(); // Publish an update event with the current state
     }
 
     /**
@@ -105,11 +115,13 @@ public class RealTimeUpdateService {
         LaboratoryMemberResponseDto laboratoryMemberResponseDto = new LaboratoryMemberResponseDto(laboratoryMember);
 
         // Check if the laboratory member is in the list
-        if (entitiesListResponseDto.getLaboratoryMembers().contains(laboratoryMemberResponseDto)) {
-            // Remove the laboratory member from the list of present members
-            entitiesListResponseDto.removeLaboratoryMember(laboratoryMemberResponseDto);
-            publishUpdateEvent(); // Publish an update event with the current state
+        if (!entitiesListResponseDto.getLaboratoryMembers().contains(laboratoryMemberResponseDto)) {
+            throw new EntityNotPresentException("The entity is not present and cannot be removed.");
         }
+
+        // Remove the laboratory member from the list of present members
+        entitiesListResponseDto.removeLaboratoryMember(laboratoryMemberResponseDto);
+        publishUpdateEvent(); // Publish an update event with the current state
     }
 
     /**
@@ -136,7 +148,9 @@ public class RealTimeUpdateService {
             if (record.getPharmacyRepresentative() != null) {
                 // Add pharmacy representative to the list if present
                 addPharmacyRepresentativePresent(record.getPharmacyRepresentative());
-            } else if (record.getLaboratoryMember() != null) {
+            }
+
+            if (record.getLaboratoryMember() != null) {
                 // Add laboratory member to the list if present
                 addLaboratoryMemberPresent(record.getLaboratoryMember());
             }

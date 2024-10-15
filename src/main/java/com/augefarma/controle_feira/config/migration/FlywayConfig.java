@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 import javax.sql.DataSource;
 
 @Configuration
+@Profile({"development", "production"})
 public class FlywayConfig {
 
     private final DataSource dataSource;

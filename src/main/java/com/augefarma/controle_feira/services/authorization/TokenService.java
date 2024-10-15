@@ -5,7 +5,6 @@ import com.augefarma.controle_feira.exceptions.JWTGenerationException;
 import com.augefarma.controle_feira.exceptions.JWTValidException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,7 @@ public class TokenService {
                     .withIssuedAt(new Date()) // Set the issued at date to the current date and time
                     .withExpiresAt(generateExpirationDate()) // Set the expiration date using the helper method
                     .sign(algorithm); // Sign the token with the specified algorithm
-        } catch (JWTCreationException exception) {
+        } catch (IllegalArgumentException exception) {
             // Throw a custom exception if there is an error during token creation
             throw new JWTGenerationException("token generation failure");
         }

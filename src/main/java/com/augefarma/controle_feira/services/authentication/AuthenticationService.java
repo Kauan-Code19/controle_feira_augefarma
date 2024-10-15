@@ -33,14 +33,7 @@ public class AuthenticationService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        try {
-            // Attempts to retrieve an AdministratorEntity by the provided email
-            return administratorRepository.findByEmail(email);
-        } catch (UsernameNotFoundException exception) {
-            // If the email is not found, throw a custom ResourceNotFoundException
-            throw new ResourceNotFoundException("Resource not found");
-        }
+        return administratorRepository.findByEmail(email);
     }
 
     /**
