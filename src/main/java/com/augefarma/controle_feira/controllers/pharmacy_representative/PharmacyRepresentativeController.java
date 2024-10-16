@@ -107,4 +107,11 @@ public class PharmacyRepresentativeController {
         // Return a ResponseEntity with status 200 (OK) and the response body
         return ResponseEntity.ok(pharmacyRepresentatives);
     }
+
+    @DeleteMapping("/{pharmacyRepresentativeId}")
+    public ResponseEntity<Void> deletePharmacyRepresentative(@PathVariable Long pharmacyRepresentativeId) {
+        pharmacyRepresentativeService.deletePharmacyRepresentative(pharmacyRepresentativeId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -145,4 +145,13 @@ public class PharmacyRepresentativeService {
                     .collect(Collectors.toList());
         }
     }
+
+    @Transactional
+    public void deletePharmacyRepresentative(Long pharmacyRepresentativeId) {
+        try {
+            pharmacyRepresentativeRepository.deleteById(pharmacyRepresentativeId);
+        }catch (EntityNotFoundException exception) {
+            throw new ResourceNotFoundException("Pharmacy Representative not found");
+        }
+    }
 }

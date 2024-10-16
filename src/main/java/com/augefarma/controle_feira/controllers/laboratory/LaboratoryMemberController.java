@@ -97,4 +97,11 @@ public class LaboratoryMemberController {
 
         return ResponseEntity.ok(laboratoryMembers);
     }
+
+    @DeleteMapping("/{laboratoryMemberId}")
+    public ResponseEntity<Void> deleteLaboratoryMember(@PathVariable Long laboratoryMemberId) {
+        laboratoryMemberService.deleteLaboratoryMember(laboratoryMemberId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

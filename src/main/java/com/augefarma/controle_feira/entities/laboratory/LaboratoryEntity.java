@@ -1,5 +1,6 @@
 package com.augefarma.controle_feira.entities.laboratory;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +32,6 @@ public class LaboratoryEntity {
     @Column(name = "corporate_reason", nullable = false, unique = true, updatable = false)
     private String corporateReason;
 
-    @OneToMany(mappedBy = "laboratory")
+    @OneToMany(mappedBy = "laboratory", cascade = CascadeType.ALL)
     private List<LaboratoryMemberEntity> members;
 }

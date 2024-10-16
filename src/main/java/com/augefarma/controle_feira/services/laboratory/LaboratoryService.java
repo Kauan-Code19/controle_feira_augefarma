@@ -1,13 +1,18 @@
 package com.augefarma.controle_feira.services.laboratory;
 
 import com.augefarma.controle_feira.dtos.laboratory.LaboratoryDto;
+import com.augefarma.controle_feira.dtos.laboratory.LaboratoryMemberResponseDto;
 import com.augefarma.controle_feira.dtos.laboratory.LaboratoryResponseDto;
 import com.augefarma.controle_feira.entities.laboratory.LaboratoryEntity;
+import com.augefarma.controle_feira.exceptions.ResourceNotFoundException;
 import com.augefarma.controle_feira.repositories.laboratory.LaboratoryRepository;
 import com.augefarma.controle_feira.services.badge.BadgeService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class LaboratoryService {
@@ -38,5 +43,22 @@ public class LaboratoryService {
 
         // Convert the saved entity to a DTO and return it
         return new LaboratoryResponseDto(laboratory);
+    }
+
+    @Transactional(readOnly = true)
+    public LaboratoryResponseDto getLaboratoryByCorporateReason(String corporateReason) {
+        LaboratoryEntity laboratory = laboratoryRepository.findByCorporateReason(corporateReason)
+                .orElseThrow(() -> new ResourceNotFoundException("laboratory not found"));
+
+        return new LaboratoryResponseDto(laboratory);
+    }
+
+    @Transactional
+    public void deleteLaboratory(Long laboratoryId) {
+        try {
+            laboratoryRepository.deleteById(laboratoryId);
+        } catch (EntityNotFoundException exception) {
+            throw new ResourceNotFoundException("laboratory not found");
+        }
     }
 }

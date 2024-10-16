@@ -137,4 +137,13 @@ public class LaboratoryMemberService {
                 .map(LaboratoryMemberResponseDto::new)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void deleteLaboratoryMember(Long laboratoryMemberId) {
+        try {
+            laboratoryMemberRepository.deleteById(laboratoryMemberId);
+        } catch (EntityNotFoundException exception) {
+            throw new ResourceNotFoundException("Laboratory Member not found");
+        }
+    }
 }
