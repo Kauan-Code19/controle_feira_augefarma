@@ -51,7 +51,7 @@ public class AuthenticationService implements UserDetailsService {
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         } catch (InternalAuthenticationServiceException | BadCredentialsException exception) {
             // Throws a custom exception if the credentials are invalid
-            throw new InvalidCredentialsException("Invalid credentials");
+            throw new InvalidCredentialsException("Credenciais inválidas");
         }
     }
 }

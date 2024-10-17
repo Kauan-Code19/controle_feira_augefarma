@@ -48,7 +48,7 @@ public class LaboratoryService {
     @Transactional(readOnly = true)
     public LaboratoryResponseDto getLaboratoryByCorporateReason(String corporateReason) {
         LaboratoryEntity laboratory = laboratoryRepository.findByCorporateReason(corporateReason)
-                .orElseThrow(() -> new ResourceNotFoundException("laboratory not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Laboratório não encontrado"));
 
         return new LaboratoryResponseDto(laboratory);
     }
@@ -58,7 +58,7 @@ public class LaboratoryService {
         try {
             laboratoryRepository.deleteById(laboratoryId);
         } catch (EntityNotFoundException exception) {
-            throw new ResourceNotFoundException("laboratory not found");
+            throw new ResourceNotFoundException("Laboratório não encontrado");
         }
     }
 }

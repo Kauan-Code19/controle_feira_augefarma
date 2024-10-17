@@ -65,7 +65,7 @@ public class ValidateEntryExitServiceTest {
         CpfEntityDto cpfEntityDto = new CpfEntityDto(pharmacyRepresentative.getCpf()); // Create DTO for CPF
 
         // Expected response for successful access
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Access granted");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Acesso concedido");
         // Call the validateEntry method
         ValidateEntryExitResponseDto accessMessage = validateEntryExitService
                 .validateEntry(cpfEntityDto.cpf(), this.eventSegment);
@@ -84,7 +84,7 @@ public class ValidateEntryExitServiceTest {
         realTimeUpdateService.addPharmacyRepresentativePresent(pharmacyRepresentative);
 
         // Expected response for successful exit recording
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Exit recorded successfully");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Saída registrada com sucesso");
         // Call the validateExit method
         ValidateEntryExitResponseDto deniedMessage = validateEntryExitService
                 .validateExit(cpfEntityDto.cpf());
@@ -102,7 +102,7 @@ public class ValidateEntryExitServiceTest {
         CpfEntityDto cpfEntityDto = new CpfEntityDto(laboratoryMember.getCpf()); // Create DTO for CPF
 
         // Expected response for successful access
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Access granted");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Acesso concedido");
         // Call the validateEntry method
         ValidateEntryExitResponseDto accessMessage = validateEntryExitService
                 .validateEntry(cpfEntityDto.cpf(), this.eventSegment);
@@ -119,7 +119,7 @@ public class ValidateEntryExitServiceTest {
         CpfEntityDto cpfEntityDto = new CpfEntityDto(laboratoryMember.getCpf()); // Create DTO for CPF
 
         // Expected response for successful exit recording
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Exit recorded successfully");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Saída registrada com sucesso");
 
         realTimeUpdateService.addLaboratoryMemberPresent(laboratoryMember);
 
@@ -157,7 +157,7 @@ public class ValidateEntryExitServiceTest {
         CpfEntityDto cpfEntityDto = new CpfEntityDto(pharmacyRepresentative.getCpf()); // Create DTO for CPF
 
         // Expected response for successful access
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Access granted");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Acesso concedido");
         // Call the validateEntry method
         ValidateEntryExitResponseDto accessMessage = validateEntryExitService
                 .validateEntry(cpfEntityDto.cpf(), this.eventSegment);
@@ -174,7 +174,7 @@ public class ValidateEntryExitServiceTest {
         CpfEntityDto cpfEntityDto = new CpfEntityDto(laboratoryMember.getCpf()); // Create DTO for CPF
 
         // Expected response for successful access
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Access granted");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Acesso concedido");
         // Call the validateEntry method
         ValidateEntryExitResponseDto accessMessage = validateEntryExitService
                 .validateEntry(cpfEntityDto.cpf(), this.eventSegment);
@@ -421,26 +421,26 @@ public class ValidateEntryExitServiceTest {
 
     private String generateAccessDeniedMessage(PharmacyRepresentativeEntity pharmacyRepresentative) {
         // Generate a message for access denial for pharmacy representatives
-        return "Access denied: CPF " + pharmacyRepresentative.getCpf()
-                + " with ID " + pharmacyRepresentative.getId() + " has already been granted access";
+        return "Acesso negado: CPF " + pharmacyRepresentative.getCpf()
+                + " com ID " + pharmacyRepresentative.getId() + " já teve o acesso garantido";
     }
 
     private String generateAccessDeniedMessage(LaboratoryMemberEntity laboratoryMember) {
         // Generate a message for access denial for laboratory members
-        return "Access denied: CPF " + laboratoryMember.getCpf()
-                + " with ID " + laboratoryMember.getId() + " has already been granted access";
+        return "Acesso negado: CPF " + laboratoryMember.getCpf()
+                + " com ID " + laboratoryMember.getId() + " já teve o acesso garantido";
     }
 
     private String generateExitDeniedMessage(PharmacyRepresentativeEntity pharmacyRepresentative) {
         // Generate a message for exit denial for pharmacy representatives
-        return "Departure denied: CPF " + pharmacyRepresentative.getCpf()
-                + " with ID " + pharmacyRepresentative.getId() + " already had the exit registered";
+        return "Saída negada: CPF " + pharmacyRepresentative.getCpf()
+                + " com ID " + pharmacyRepresentative.getId() + " já teve a saída registrada";
     }
 
     private String generateExitDeniedMessage(LaboratoryMemberEntity laboratoryMember) {
         // Generate a message for exit denial for laboratory members
-        return "Departure denied: CPF " + laboratoryMember.getCpf()
-                + " with ID " + laboratoryMember.getId() + " already had the exit registered";
+        return "Saída negada: CPF " + laboratoryMember.getCpf()
+                + " com ID " + laboratoryMember.getId() + " já teve a saída registrada";
     }
 
     private ValidateEntryExitResponseDto createValidateEntryExitResponseDto(String message) {

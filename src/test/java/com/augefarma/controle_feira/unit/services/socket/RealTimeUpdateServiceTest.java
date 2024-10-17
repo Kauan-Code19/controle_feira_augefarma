@@ -82,7 +82,7 @@ public class RealTimeUpdateServiceTest {
             realTimeUpdateService.addPharmacyRepresentativePresent(pharmacyRepresentative);
         });
 
-        assertEquals("The entity is already present and cannot be added again.", exception.getMessage(),
+        assertEquals("A entidade já está presente e não pode ser adicionada novamente", exception.getMessage(),
                 "A mensagem da exceção deve ser adequada.");
     }
 
@@ -111,7 +111,7 @@ public class RealTimeUpdateServiceTest {
             realTimeUpdateService.removePharmacyRepresentativePresent(pharmacyRepresentative);
         });
 
-        assertEquals("The entity is not present and cannot be removed.", exception.getMessage(),
+        assertEquals("A entidade não está presente e não pode ser removida", exception.getMessage(),
                 "A mensagem da exceção deve ser adequada.");
     }
 
@@ -144,7 +144,7 @@ public class RealTimeUpdateServiceTest {
             realTimeUpdateService.addLaboratoryMemberPresent(laboratoryMember);
         });
 
-        assertEquals("The entity is already present and cannot be added again.", exception.getMessage(),
+        assertEquals("A entidade já está presente e não pode ser adicionada novamente", exception.getMessage(),
                 "A mensagem da exceção deve ser adequada.");
     }
 
@@ -173,7 +173,7 @@ public class RealTimeUpdateServiceTest {
             realTimeUpdateService.removeLaboratoryMemberPresent(laboratoryMember);
         });
 
-        assertEquals("The entity is not present and cannot be removed.", exception.getMessage(),
+        assertEquals("A entidade não está presente e não pode ser removida", exception.getMessage(),
                 "A mensagem da exceção deve ser adequada.");
     }
 

@@ -61,7 +61,7 @@ public class ValidateEntryExitServiceTest {
         setupPharmacyRepresentativeMockAndSaveEntryExitRecord(this.cpfPharmacyRepresentative, pharmacyRepresentative);
 
         // Create the expected response DTO for a successful entry
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Access granted");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Acesso concedido");
         // Call the service method to validate the entry
         ValidateEntryExitResponseDto actualResponse = validateEntryExitService
                 .validateEntry(this.cpfPharmacyRepresentative, this.eventSegment);
@@ -81,7 +81,7 @@ public class ValidateEntryExitServiceTest {
         setupPharmacyRepresentativeMockAndSaveEntryExitRecord(this.cpfPharmacyRepresentative, pharmacyRepresentative);
 
         // Create the expected response DTO for a successful exit
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Exit recorded successfully");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Saída registrada com sucesso");
         // Call the service method to validate the exit
         ValidateEntryExitResponseDto actualResponse = validateEntryExitService
                 .validateExit(this.cpfPharmacyRepresentative);
@@ -102,7 +102,7 @@ public class ValidateEntryExitServiceTest {
         setupLaboratoryMemberMockAndSaveEntryExitRecord(this.cpfLaboratoryMember, laboratoryMember);
 
         // Create the expected response DTO for a successful entry
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Access granted");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Acesso concedido");
         // Call the service method to validate the entry
         ValidateEntryExitResponseDto actualResponse = validateEntryExitService
                 .validateEntry(this.cpfLaboratoryMember, this.eventSegment);
@@ -122,7 +122,7 @@ public class ValidateEntryExitServiceTest {
         setupLaboratoryMemberMockAndSaveEntryExitRecord(this.cpfLaboratoryMember, laboratoryMember);
 
         // Create the expected response DTO for a successful exit
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Exit recorded successfully");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Saída registrada com sucesso");
         // Call the service method to validate the exit
         ValidateEntryExitResponseDto actualResponse = validateEntryExitService
                 .validateExit(this.cpfLaboratoryMember);
@@ -169,7 +169,7 @@ public class ValidateEntryExitServiceTest {
         setupPharmacyRepresentativeMockAndSaveEntryExitRecord(this.cpfPharmacyRepresentative, pharmacyRepresentative);
 
         // Create the expected response DTO for a successful entry
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Access granted");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Acesso concedido");
         // Call the service method to validate the entry
         ValidateEntryExitResponseDto actualResponse = validateEntryExitService
                 .validateEntry(this.cpfPharmacyRepresentative, this.eventSegment);
@@ -189,7 +189,7 @@ public class ValidateEntryExitServiceTest {
         setupLaboratoryMemberMockAndSaveEntryExitRecord(this.cpfLaboratoryMember, laboratoryMember);
 
         // Create the expected response DTO for a successful entry
-        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Access granted");
+        ValidateEntryExitResponseDto expectedResponse = createValidateEntryExitResponseDto("Acesso concedido");
         // Call the service method to validate the entry
         ValidateEntryExitResponseDto actualResponse = validateEntryExitService
                 .validateEntry(this.cpfLaboratoryMember, this.eventSegment);
@@ -474,26 +474,26 @@ public class ValidateEntryExitServiceTest {
 
     // Helper method to generate an access denied message for Pharmacy Representative
     private String generateAccessDeniedMessage(PharmacyRepresentativeEntity pharmacyRepresentative) {
-        return "Access denied: CPF " + pharmacyRepresentative.getCpf()
-                + " with ID " + pharmacyRepresentative.getId() + " has already been granted access";
+        return "Acesso negado: CPF " + pharmacyRepresentative.getCpf()
+                + " com ID " + pharmacyRepresentative.getId() + " já teve o acesso garantido";
     }
 
     // Helper method to generate an access denied message for Laboratory Member
     private String generateAccessDeniedMessage(LaboratoryMemberEntity laboratoryMember) {
-        return "Access denied: CPF " + laboratoryMember.getCpf()
-                + " with ID " + laboratoryMember.getId() + " has already been granted access";
+        return "Acesso negado: CPF " + laboratoryMember.getCpf()
+                + " com ID " + laboratoryMember.getId() + " já teve o acesso garantido";
     }
 
     // Helper method to generate an exit denied message for Pharmacy Representative
     private String generateExitDeniedMessage(PharmacyRepresentativeEntity pharmacyRepresentative) {
-        return "Departure denied: CPF " + pharmacyRepresentative.getCpf()
-                + " with ID " + pharmacyRepresentative.getId() + " already had the exit registered";
+        return "Saída negada: CPF " + pharmacyRepresentative.getCpf()
+                + " com ID " + pharmacyRepresentative.getId() + " já teve a saída registrada";
     }
 
     // Helper method to generate an exit denied message for Laboratory Member
     private String generateExitDeniedMessage(LaboratoryMemberEntity laboratoryMember) {
-        return "Departure denied: CPF " + laboratoryMember.getCpf()
-                + " with ID " + laboratoryMember.getId() + " already had the exit registered";
+        return "Saída negada: CPF " + laboratoryMember.getCpf()
+                + " com ID " + laboratoryMember.getId() + " já teve a saída registrada";
     }
 
     // Helper method to create a ValidateEntryExitResponseDto with a message
