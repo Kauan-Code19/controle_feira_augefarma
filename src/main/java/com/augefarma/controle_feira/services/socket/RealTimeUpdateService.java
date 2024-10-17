@@ -52,8 +52,7 @@ public class RealTimeUpdateService {
 
         // Check if the representative is already in the list
         if (entitiesListResponseDto.getPharmacyRepresentatives().contains(pharmacyRepresentativeResponseDto)) {
-            throw new EntityAlreadyPresentException(
-                    "The entity is already present and cannot be added again.");
+            throw new EntityAlreadyPresentException("A entidade já está presente e não pode ser adicionada novamente");
         }
 
         // Add the representative to the list of present representatives
@@ -74,7 +73,7 @@ public class RealTimeUpdateService {
 
         // Check if the representative is in the list
         if (!entitiesListResponseDto.getPharmacyRepresentatives().contains(pharmacyRepresentativeResponseDto)) {
-            throw new EntityNotPresentException("The entity is not present and cannot be removed.");
+            throw new EntityNotPresentException("A entidade não está presente e não pode ser removida");
         }
 
         // Remove the representative from the list of present representatives
@@ -96,7 +95,7 @@ public class RealTimeUpdateService {
         // Check if the laboratory member is already in the list
         if (entitiesListResponseDto.getLaboratoryMembers().contains(laboratoryMemberResponseDto)) {
             throw new EntityAlreadyPresentException(
-                    "The entity is already present and cannot be added again.");
+                    "A entidade já está presente e não pode ser adicionada novamente");
         }
 
         // Add the laboratory member to the list of present members
@@ -116,7 +115,7 @@ public class RealTimeUpdateService {
 
         // Check if the laboratory member is in the list
         if (!entitiesListResponseDto.getLaboratoryMembers().contains(laboratoryMemberResponseDto)) {
-            throw new EntityNotPresentException("The entity is not present and cannot be removed.");
+            throw new EntityNotPresentException("A entidade não está presente e não pode ser removida");
         }
 
         // Remove the laboratory member from the list of present members

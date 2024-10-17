@@ -90,8 +90,8 @@ public class ValidateEntryExitService {
             return performCheckIn(pharmacyRepresentative, eventSegment);
         }
 
-        return new ValidateEntryExitResponseDto("Access denied: CPF " + pharmacyRepresentative.getCpf()
-                    + " with ID " + pharmacyRepresentative.getId() + " has already been granted access");
+        return new ValidateEntryExitResponseDto("Acesso negado: CPF " + pharmacyRepresentative.getCpf()
+                    + " com ID " + pharmacyRepresentative.getId() + " já teve o acesso garantido");
     }
 
     /**
@@ -111,8 +111,8 @@ public class ValidateEntryExitService {
             return performCheckIn(laboratoryMember, eventSegment);
         }
 
-        return new ValidateEntryExitResponseDto("Access denied: CPF " + laboratoryMember.getCpf()
-                    + " with ID " + laboratoryMember.getId() + " has already been granted access");
+        return new ValidateEntryExitResponseDto("Acesso negado: CPF " + laboratoryMember.getCpf()
+                    + " com ID " + laboratoryMember.getId() + " já teve o acesso garantido");
     }
 
     /**
@@ -127,8 +127,8 @@ public class ValidateEntryExitService {
         List<EntryExitRecordEntity> entryExitRecordEntityList = pharmacyRepresentative.getEntryExitRecords();
 
         if (entryExitRecordEntityList.isEmpty() || lastCheckOutCompleted(entryExitRecordEntityList)) {
-            return new ValidateEntryExitResponseDto("Departure denied: CPF " + pharmacyRepresentative.getCpf()
-                    + " with ID " + pharmacyRepresentative.getId() + " already had the exit registered");
+            return new ValidateEntryExitResponseDto("Saída negada: CPF " + pharmacyRepresentative.getCpf()
+                    + " com ID " + pharmacyRepresentative.getId() + " já teve a saída registrada");
         }
 
         return performCheckOut(entryExitRecordEntityList.get(entryExitRecordEntityList
@@ -146,8 +146,8 @@ public class ValidateEntryExitService {
         List<EntryExitRecordEntity> entryExitRecordEntityList = laboratoryMember.getEntryExitRecords();
 
         if (entryExitRecordEntityList.isEmpty() || lastCheckOutCompleted(entryExitRecordEntityList)) {
-            return new ValidateEntryExitResponseDto("Departure denied: CPF " + laboratoryMember.getCpf()
-                    + " with ID " + laboratoryMember.getId() + " already had the exit registered");
+            return new ValidateEntryExitResponseDto("Saída negada: CPF " + laboratoryMember.getCpf()
+                    + " com ID " + laboratoryMember.getId() + " já teve a saída registrada");
         }
 
         return performCheckOut(entryExitRecordEntityList.get(entryExitRecordEntityList.size() - 1), laboratoryMember);
@@ -189,7 +189,7 @@ public class ValidateEntryExitService {
         }
 
         entryExitRecordRepository.save(entryExitRecord);
-        return new ValidateEntryExitResponseDto("Access granted");
+        return new ValidateEntryExitResponseDto("Acesso concedido");
     }
 
     /**
@@ -213,7 +213,7 @@ public class ValidateEntryExitService {
             realTimeUpdateService.removeLaboratoryMemberPresent((LaboratoryMemberEntity) entity);
         }
 
-        return new ValidateEntryExitResponseDto("Exit recorded successfully");
+        return new ValidateEntryExitResponseDto("Saída registrada com sucesso");
     }
 
     /**
@@ -240,6 +240,6 @@ public class ValidateEntryExitService {
         }
 
         // Throw an exception if neither entity is found
-        throw new ResourceNotFoundException("Resource not found");
+        throw new ResourceNotFoundException("Nenhuma entidade encontrada");
     }
 }

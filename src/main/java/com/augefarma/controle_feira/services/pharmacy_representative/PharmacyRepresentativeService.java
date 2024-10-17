@@ -74,7 +74,7 @@ public class PharmacyRepresentativeService {
             return new PharmacyRepresentativeResponseDto(pharmacyRepresentative);
         } catch (EntityNotFoundException exception) {
             // If the client entity is not found, throw a custom exception indicating the resource is not found
-            throw new ResourceNotFoundException("Resource not found");
+            throw new ResourceNotFoundException("Representante de farmácia não encontrado");
         }
     }
 
@@ -98,7 +98,7 @@ public class PharmacyRepresentativeService {
             return badgeService.generateBadge(pharmacyRepresentative);
         } catch (EntityNotFoundException exception) {
             // If the client entity is not found, throw a custom exception indicating the resource is not found
-            throw new ResourceNotFoundException("Resource not found");
+            throw new ResourceNotFoundException("Representante de farmácia não encontrado");
         } catch (IOException | WriterException e) {
             // If an error occurs during badge generation, throw a runtime exception
             throw new RuntimeException(e);
@@ -124,7 +124,7 @@ public class PharmacyRepresentativeService {
             // If the value is a CPF
             PharmacyRepresentativeEntity pharmacyRepresentative = pharmacyRepresentativeRepository
                     .findByCpf(nameOrCpf)
-                    .orElseThrow(() -> new ResourceNotFoundException("Pharmacy Representative not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Representante de farmácia não encontrado"));
 
             // Return a list with only one element
             return List.of(new PharmacyRepresentativeResponseDto(pharmacyRepresentative));
@@ -136,7 +136,7 @@ public class PharmacyRepresentativeService {
 
             if (pharmacyRepresentatives.isEmpty()) {
                 // If no representatives are found with the provided name
-                throw new ResourceNotFoundException("Pharmacy Representative not found");
+                throw new ResourceNotFoundException("Representante de farmácia não encontrado");
             }
 
             // Convert the list of entities to a list of DTOs and return
@@ -151,7 +151,7 @@ public class PharmacyRepresentativeService {
         try {
             pharmacyRepresentativeRepository.deleteById(pharmacyRepresentativeId);
         }catch (EntityNotFoundException exception) {
-            throw new ResourceNotFoundException("Pharmacy Representative not found");
+            throw new ResourceNotFoundException("Representante de farmácia não encontrado");
         }
     }
 }

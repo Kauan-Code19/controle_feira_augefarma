@@ -41,7 +41,7 @@ public class TokenService {
                     .sign(algorithm); // Sign the token with the specified algorithm
         } catch (IllegalArgumentException exception) {
             // Throw a custom exception if there is an error during token creation
-            throw new JWTGenerationException("token generation failure");
+            throw new JWTGenerationException("Falha na geração do token");
         }
     }
 
@@ -63,7 +63,7 @@ public class TokenService {
                     .getSubject(); // Extract and return the subject (administrator's email)
         } catch (JWTVerificationException exception) {
             // Throw a custom exception if the token is not valid
-            throw new JWTValidException("token is not valid");
+            throw new JWTValidException("token não é válido");
         }
     }
 

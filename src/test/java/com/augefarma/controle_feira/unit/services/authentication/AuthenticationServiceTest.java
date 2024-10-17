@@ -97,7 +97,7 @@ public class AuthenticationServiceTest {
 
         // Set up the mock to throw an exception when trying to authenticate with invalid credentials
         when(authenticationManager.authenticate(authRequest))
-                .thenThrow(new BadCredentialsException("Invalid credentials"));
+                .thenThrow(new BadCredentialsException("Credenciais inválidas"));
 
         // Verify that an invalid credentials exception is thrown
         assertThrows(InvalidCredentialsException.class, () -> {

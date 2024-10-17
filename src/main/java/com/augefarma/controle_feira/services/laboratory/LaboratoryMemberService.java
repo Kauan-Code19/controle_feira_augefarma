@@ -78,7 +78,7 @@ public class LaboratoryMemberService {
             return new LaboratoryMemberResponseDto(laboratoryMember);
         } catch (EntityNotFoundException exception) {
             // Throw a custom exception if the laboratory member is not found
-            throw new ResourceNotFoundException("Resource not found");
+            throw new ResourceNotFoundException("Membro de laboratório não encontrado");
         }
     }
 
@@ -101,7 +101,7 @@ public class LaboratoryMemberService {
             return badgeService.generateBadge(laboratoryMember);
         } catch (EntityNotFoundException exception) {
             // Throw a custom exception if the laboratory member is not found
-            throw new ResourceNotFoundException("Resource not found");
+            throw new ResourceNotFoundException("Membro de laboratório não encontrado");
         } catch (IOException | WriterException e) {
             // Throw a runtime exception if there is an error generating the badge
             throw new RuntimeException(e);
@@ -117,7 +117,7 @@ public class LaboratoryMemberService {
             // If the value is a CPF
             LaboratoryMemberEntity laboratoryMember = laboratoryMemberRepository
                     .findByCpf(nameOrCpf)
-                    .orElseThrow(() -> new ResourceNotFoundException("Laboratory Member not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Membro de laboratório não encontrado"));
 
             // Return a list with only one element
             return List.of(new LaboratoryMemberResponseDto(laboratoryMember));
@@ -129,7 +129,7 @@ public class LaboratoryMemberService {
 
         if (laboratoryMembers.isEmpty()) {
             // If no representatives are found with the provided name
-            throw new ResourceNotFoundException("Laboratory Member not found");
+            throw new ResourceNotFoundException("Membro de laboratório não encontrado");
         }
 
         // Convert the list of entities to a list of DTOs and return
@@ -143,7 +143,7 @@ public class LaboratoryMemberService {
         try {
             laboratoryMemberRepository.deleteById(laboratoryMemberId);
         } catch (EntityNotFoundException exception) {
-            throw new ResourceNotFoundException("Laboratory Member not found");
+            throw new ResourceNotFoundException("Membro de laboratório não encontrado");
         }
     }
 }

@@ -120,7 +120,7 @@ public class RealTimeUpdateServiceTest {
                 realTimeUpdateService.addPharmacyRepresentativePresent(pharmacyRepresentative)
         );
         // Assert that the correct exception message is returned
-        assertEquals("The entity is already present and cannot be added again.", exception.getMessage());
+        assertEquals("A entidade já está presente e não pode ser adicionada novamente", exception.getMessage());
 
         // Clean up by removing the representative
 
@@ -142,7 +142,7 @@ public class RealTimeUpdateServiceTest {
                 realTimeUpdateService.removePharmacyRepresentativePresent(pharmacyRepresentative)
         );
         // Assert that the correct exception message is returned
-        assertEquals("The entity is not present and cannot be removed.", exception.getMessage());
+        assertEquals("A entidade não está presente e não pode ser removida", exception.getMessage());
     }
 
     // Test to ensure a LaboratoryMember can be added successfully
@@ -163,7 +163,7 @@ public class RealTimeUpdateServiceTest {
                 realTimeUpdateService.addLaboratoryMemberPresent(laboratoryMember)
         );
         // Assert that the correct exception message is returned
-        assertEquals("The entity is already present and cannot be added again.", exception.getMessage());
+        assertEquals("A entidade já está presente e não pode ser adicionada novamente", exception.getMessage());
 
         // Clean up by removing the member
     }
@@ -184,7 +184,7 @@ public class RealTimeUpdateServiceTest {
                 realTimeUpdateService.removeLaboratoryMemberPresent(laboratoryMember)
         );
         // Assert that the correct exception message is returned
-        assertEquals("The entity is not present and cannot be removed.", exception.getMessage());
+        assertEquals("A entidade não está presente e não pode ser removida", exception.getMessage());
     }
 
     // Test to ensure the initial state can be successfully initialized
