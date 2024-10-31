@@ -49,6 +49,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // Allows public access to the login endpoint
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/administrator").permitAll()
                         .requestMatchers(HttpMethod.GET, "/realtime").permitAll()
                         .anyRequest().authenticated()) // Requires authentication for all other requests
                 .exceptionHandling(exceptionHandling -> exceptionHandling
