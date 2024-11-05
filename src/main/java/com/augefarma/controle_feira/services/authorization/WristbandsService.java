@@ -51,7 +51,8 @@ public class WristbandsService {
 
             // If neither entity is found, throw a ResourceNotFoundException
             if (laboratoryMember.isEmpty()) {
-                throw new ResourceNotFoundException("Entity not found, please provide a valid CPF");
+                throw new ResourceNotFoundException("Membro de Laboratório não encontrado," +
+                        " envie um CPF válido");
             }
 
             // Check wristband delivery status for the LaboratoryMemberEntity
@@ -79,14 +80,14 @@ public class WristbandsService {
                 .anyMatch(record -> record.getEventSegment() == EventSegment.FAIR)) {
             // If a record exists, deny access and return a response indicating the wristband
             // has already been delivered
-            return new WristbandsResponseDto("Access denied: CPF " + laboratoryMember.getCpf()
-                    + " with ID " + laboratoryMember.getId() + " has already received the wristband");
+            return new WristbandsResponseDto("Acesso negado: CPF " + laboratoryMember.getCpf() + " com ID "
+                    + laboratoryMember.getId() + " já recebeu a pulseira");
         }
 
         // If no record exists, return a response indicating that the wristband has not been delivered
-        return new WristbandsResponseDto("Wristband not delivered: CPF "
-                + laboratoryMember.getCpf() + " with ID " + laboratoryMember.getId()
-                + " has no check-in record");
+        return new WristbandsResponseDto("Pulseira não entregue: CPF "
+                + laboratoryMember.getCpf() + " com ID " + laboratoryMember.getId()
+                + " não possui registro de check-in");
     }
 
     /**
@@ -107,13 +108,13 @@ public class WristbandsService {
                 .anyMatch(record -> record.getEventSegment() == EventSegment.FAIR)) {
             // If a record exists, deny access and return a response indicating the wristband
             // has already been delivered
-            return new WristbandsResponseDto("Access denied: CPF " + pharmacyRepresentative.getCpf()
-                    + " with ID " + pharmacyRepresentative.getId() + " has already received the wristband");
+            return new WristbandsResponseDto("Acesso negado: CPF " + pharmacyRepresentative.getCpf() + " com ID "
+                    + pharmacyRepresentative.getId() + " já recebeu a pulseira");
         }
 
         // If no record exists, return a response indicating that the wristband has not been delivered
-        return new WristbandsResponseDto("Wristband not delivered: CPF "
-                + pharmacyRepresentative.getCpf() + " with ID " + pharmacyRepresentative.getId()
-                + " has no check-in record");
+        return new WristbandsResponseDto("Pulseira não entregue: CPF "
+                + pharmacyRepresentative.getCpf() + " com ID " + pharmacyRepresentative.getId()
+                + " não possui registro de check-in");
     }
 }
