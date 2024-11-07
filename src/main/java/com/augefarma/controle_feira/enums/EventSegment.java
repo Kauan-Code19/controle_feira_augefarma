@@ -1,4 +1,4 @@
-package com.augefarma.controle_feira.entities.entry_exit;
+package com.augefarma.controle_feira.enums;
 
 import lombok.Getter;
 
