@@ -8,6 +8,7 @@ import com.augefarma.controle_feira.exceptions.InvalidCredentialsException;
 import com.augefarma.controle_feira.exceptions.JWTGenerationException;
 import com.augefarma.controle_feira.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import java.time.Instant;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @ControllerAdvice
 public class ExceptionHandlerController  extends ResponseEntityExceptionHandler {
@@ -153,6 +156,27 @@ public class ExceptionHandlerController  extends ResponseEntityExceptionHandler 
 
         CustomErrorDto customErrorDto = new CustomErrorDto(Instant.now(),
                 status.value(), exception.getMessage(), request.getRequestURI());
+
+        return ResponseEntity.status(status).body(customErrorDto);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<CustomErrorDto> handleDataIntegrityViolation(DataIntegrityViolationException exception, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        String mensagemErro = exception.getMessage();
+
+        Pattern pattern = Pattern.compile("Detalhe:.*?[(].*?[)] já existe.");
+        Matcher matcher = pattern.matcher(mensagemErro);
+
+        String erroDetalhado = "Detalhe não identificado";
+
+        if (matcher.find()) {
+            erroDetalhado = matcher.group().trim();
+        }
+
+        CustomErrorDto customErrorDto = new CustomErrorDto(Instant.now(),
+                status.value(), erroDetalhado, request.getRequestURI());
 
         return ResponseEntity.status(status).body(customErrorDto);
     }

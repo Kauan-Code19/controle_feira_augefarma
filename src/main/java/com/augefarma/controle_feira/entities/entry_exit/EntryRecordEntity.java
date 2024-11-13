@@ -1,22 +1,22 @@
 package com.augefarma.controle_feira.entities.entry_exit;
 
-import com.augefarma.controle_feira.entities.laboratory.LaboratoryMemberEntity;
-import com.augefarma.controle_feira.entities.pharmacy_representative.PharmacyRepresentativeEntity;
+import com.augefarma.controle_feira.entities.participant.ParticipantEntity;
+import com.augefarma.controle_feira.enums.EventSegment;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.EqualsAndHashCode;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -25,8 +25,8 @@ import java.time.LocalDateTime;
 @Setter
 @EqualsAndHashCode
 @Entity
-@Table(name = "Entry_Exit_Records")
-public class EntryExitRecordEntity {
+@Table(name = "Entry_Records")
+public class EntryRecordEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,18 +34,11 @@ public class EntryExitRecordEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "pharmacy_representative_id", updatable = false)
-    private PharmacyRepresentativeEntity pharmacyRepresentative;
-
-    @ManyToOne
-    @JoinColumn(name = "laboratory_member_id", updatable = false)
-    private LaboratoryMemberEntity laboratoryMember;
+    @JoinColumn(name = "participant_id", updatable = false, nullable = false)
+    private ParticipantEntity participant;
 
     @Column(name = "checkin_time", updatable = false, nullable = false)
     private LocalDateTime checkinTime;
-
-    @Column(name = "checkout_time")
-    private LocalDateTime checkoutTime;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "event_segment", nullable = false, updatable = false)

@@ -7,6 +7,7 @@ import com.augefarma.controle_feira.entities.laboratory.LaboratoryMemberEntity;
 import com.augefarma.controle_feira.exceptions.ResourceNotFoundException;
 import com.augefarma.controle_feira.repositories.laboratory.LaboratoryMemberRepository;
 import com.augefarma.controle_feira.repositories.laboratory.LaboratoryRepository;
+import com.augefarma.controle_feira.repositories.participant.ParticipantRepository;
 import com.augefarma.controle_feira.services.badge.BadgeService;
 import com.google.zxing.WriterException;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,13 +23,16 @@ public class LaboratoryMemberService {
 
     private final LaboratoryMemberRepository laboratoryMemberRepository;
     private final LaboratoryRepository laboratoryRepository;
+    private final ParticipantRepository participantRepository;
     private final BadgeService badgeService;
 
     @Autowired
     public LaboratoryMemberService(LaboratoryMemberRepository laboratoryMemberRepository,
-                                   LaboratoryRepository laboratoryRepository, BadgeService badgeService) {
+                                   LaboratoryRepository laboratoryRepository,
+                                   ParticipantRepository participantRepository, BadgeService badgeService) {
         this.laboratoryMemberRepository = laboratoryMemberRepository;
         this.laboratoryRepository = laboratoryRepository;
+        this.participantRepository = participantRepository;
         this.badgeService = badgeService;
     }
 
@@ -54,7 +58,7 @@ public class LaboratoryMemberService {
         laboratoryMember.setLaboratory(laboratory);
 
         // Save the laboratory member entity to the repository
-        laboratoryMemberRepository.save(laboratoryMember);
+        participantRepository.save(laboratoryMember);
 
         // Return the saved entity as a response DTO
         return new LaboratoryMemberResponseDto(laboratoryMember);
