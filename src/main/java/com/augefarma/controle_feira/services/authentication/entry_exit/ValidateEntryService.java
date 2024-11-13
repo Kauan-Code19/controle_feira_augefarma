@@ -11,6 +11,8 @@ import com.augefarma.controle_feira.services.socket.RealTimeUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,9 +33,9 @@ public class ValidateEntryService {
 
     public ValidateEntryExitResponseDto validateEntryFair(String cpf, EventSegment eventSegment) {
         ParticipantEntity participant = getParticipantByCpf(cpf);
-
         return handleCheckInFair(participant, eventSegment);
     }
+
 
     @Transactional(readOnly = true)
     private ParticipantEntity getParticipantByCpf(String cpf) {
@@ -41,30 +43,33 @@ public class ValidateEntryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Nenhum participante encontrado"));
     }
 
-    private ValidateEntryExitResponseDto handleCheckInFair(
-            ParticipantEntity participant, EventSegment eventSegment) {
 
-        List<EntryRecordEntity> entryRecordsList = participant.getEntryRecords()
-                .stream().filter(entry -> entry.getEventSegment() == EventSegment.FAIR)
-                .toList();
+    private ValidateEntryExitResponseDto handleCheckInFair(ParticipantEntity participant, EventSegment eventSegment) {
+        List<EntryRecordEntity> previousEntries = hasPreviousEntryForFair(participant);
+        return performCheckIn(participant, eventSegment, previousEntries);
+    }
 
-        if (!entryRecordsList.isEmpty()) {
-            return new ValidateEntryExitResponseDto("Acesso negado: CPF " + participant.getCpf()
-                    + " com ID " + participant.getId() + " já teve o acesso concedido");
+
+    private List<EntryRecordEntity> hasPreviousEntryForFair(ParticipantEntity participant) {
+        return  participant.getEntryRecords()
+                .stream()
+                .filter(entry -> entry.getEventSegment() == EventSegment.FAIR
+                        && entry.getCheckinTime().toLocalDate().isEqual(LocalDate.now())).toList();
+    }
+
+
+    private ValidateEntryExitResponseDto performCheckIn(ParticipantEntity participant, EventSegment eventSegment,
+                                                        List<EntryRecordEntity> previousEntries) {
+        if (!previousEntries.isEmpty()) {
+            createEntryRecord(participant, eventSegment);
+            return buildAccessGrantedResponse(participant, true);
         }
 
-        return performCheckIn(participant, eventSegment);
-    }
-
-    private ValidateEntryExitResponseDto performCheckIn(
-            ParticipantEntity participant, EventSegment eventSegment) {
-
-        createEntryRecord(participant, eventSegment);
-
         callRealtimeUpdateService(participant);
-
-        return new ValidateEntryExitResponseDto("Acesso concedido");
+        createEntryRecord(participant, eventSegment);
+        return buildAccessGrantedResponse(participant, false);
     }
+
 
     @Transactional
     private void createEntryRecord(ParticipantEntity participant,
@@ -77,7 +82,19 @@ public class ValidateEntryService {
         entryRecordRepository.save(entryRecord);
     }
 
+
     private void callRealtimeUpdateService(ParticipantEntity participant) {
         participant.addToRealtimeUpdateService(realTimeUpdateService);
+    }
+
+
+    private ValidateEntryExitResponseDto buildAccessGrantedResponse(ParticipantEntity participant,
+                                                                    boolean hasPreviousEntry) {
+        if (hasPreviousEntry) {
+            return new ValidateEntryExitResponseDto("Acesso concedido: CPF " + participant.getCpf()
+                    + " com ID " + participant.getId() + " já possui um ou mais registros de acesso");
+        }
+
+        return new ValidateEntryExitResponseDto("Acesso concedido");
     }
 }

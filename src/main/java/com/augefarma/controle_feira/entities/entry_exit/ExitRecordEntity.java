@@ -34,7 +34,7 @@ public class ExitRecordEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "participant_id", updatable = false)
+    @JoinColumn(name = "participant_id", updatable = false, nullable = false)
     private ParticipantEntity participant;
 
     @Column(name = "checkout_time", updatable = false, nullable = false)

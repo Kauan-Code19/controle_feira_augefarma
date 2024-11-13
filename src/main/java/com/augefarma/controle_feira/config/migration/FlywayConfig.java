@@ -7,10 +7,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import javax.sql.DataSource;
+import java.util.Objects;
 
 @Configuration
 @Profile({"development", "production"})
 public class FlywayConfig {
+
+    @Value("${flyway.repair}")
+    private String flywayRepair;
 
     private final DataSource dataSource;
     private final String migrationLocation;
@@ -44,6 +48,10 @@ public class FlywayConfig {
                 .locations(location)
 
                 .load(); // Carrega a configuração do Flyway
+
+        if (Objects.equals(flywayRepair, "true")) {
+            flyway.repair();
+        }
 
         flyway.migrate(); // Executa a migração do banco de dados
 

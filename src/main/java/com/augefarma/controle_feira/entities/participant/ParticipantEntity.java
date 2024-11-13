@@ -56,4 +56,8 @@ public class ParticipantEntity implements RealTimePresenceRegistrable {
 
     @Override
     public void removeToRealtimeUpdateService(RealTimeUpdateService realTimeUpdateService) {}
+
+    public String getSpecificInfoForWristbandResponse() {
+        return null;
+    }
 }

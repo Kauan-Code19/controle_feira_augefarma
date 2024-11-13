@@ -4,17 +4,19 @@ CREATE TABLE participants (
     cpf VARCHAR(20) NOT NULL UNIQUE  -- Atributos comuns
 );
 
-ALTER TABLE pharmacy_representatives
-    DROP COLUMN name,
-    DROP COLUMN cpf,
-    ADD COLUMN participant_id BIGINT NOT NULL,
-    ADD CONSTRAINT fk_participant FOREIGN KEY (participant_id) REFERENCES participants(id);
+CREATE TABLE pharmacy_representatives (
+    id BIGINT PRIMARY KEY,
+    cnpj VARCHAR(20) NOT NULL UNIQUE,
+    corporate_reason VARCHAR(160) NOT NULL UNIQUE,
+    FOREIGN KEY (id) REFERENCES participants(id)
+);
 
-ALTER TABLE laboratory_members
-    DROP COLUMN name,
-    DROP COLUMN cpf,
-    ADD COLUMN participant_id BIGINT NOT NULL,
-    ADD CONSTRAINT fk_participant FOREIGN KEY (participant_id) REFERENCES participants(id);
+CREATE TABLE laboratory_members (
+    id BIGINT PRIMARY KEY,
+    laboratory_id BIGINT NOT NULL,
+    FOREIGN KEY (laboratory_id) REFERENCES Laboratories(id),
+    FOREIGN KEY (id) REFERENCES participants(id)
+);
 
 -- Criando a tabela entry_records
 CREATE TABLE entry_records (

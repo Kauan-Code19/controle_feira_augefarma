@@ -34,7 +34,7 @@ public class EntryRecordEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "participant_id", updatable = false)
+    @JoinColumn(name = "participant_id", updatable = false, nullable = false)
     private ParticipantEntity participant;
 
     @Column(name = "checkin_time", updatable = false, nullable = false)

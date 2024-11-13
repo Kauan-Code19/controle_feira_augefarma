@@ -2,10 +2,7 @@ package com.augefarma.controle_feira.entities.laboratory;
 
 import com.augefarma.controle_feira.entities.participant.ParticipantEntity;
 import com.augefarma.controle_feira.services.socket.RealTimeUpdateService;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +15,7 @@ import lombok.EqualsAndHashCode;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 @Table(name = "LaboratoryMembers")
 public class LaboratoryMemberEntity extends ParticipantEntity {
 
@@ -33,5 +31,10 @@ public class LaboratoryMemberEntity extends ParticipantEntity {
     @Override
     public void removeToRealtimeUpdateService(RealTimeUpdateService realTimeUpdateService) {
         realTimeUpdateService.removeLaboratoryMemberPresent(this);
+    }
+
+    @Override
+    public String getSpecificInfoForWristbandResponse() {
+        return this.getLaboratory().getCorporateReason();
     }
 }

@@ -4,6 +4,7 @@ import com.augefarma.controle_feira.dtos.pharmacy_representative.PharmacyReprese
 import com.augefarma.controle_feira.dtos.pharmacy_representative.PharmacyRepresentativeResponseDto;
 import com.augefarma.controle_feira.entities.pharmacy_representative.PharmacyRepresentativeEntity;
 import com.augefarma.controle_feira.exceptions.ResourceNotFoundException;
+import com.augefarma.controle_feira.repositories.participant.ParticipantRepository;
 import com.augefarma.controle_feira.repositories.pharmacy_representative.PharmacyRepresentativeRepository;
 import com.augefarma.controle_feira.services.badge.BadgeService;
 import com.google.zxing.WriterException;
@@ -19,12 +20,15 @@ import java.util.stream.Collectors;
 public class PharmacyRepresentativeService {
 
     private final PharmacyRepresentativeRepository pharmacyRepresentativeRepository;
+    private final ParticipantRepository participantRepository;
     private final BadgeService badgeService;
 
     @Autowired
     public PharmacyRepresentativeService(PharmacyRepresentativeRepository pharmacyRepresentativeRepository,
+                                         ParticipantRepository participantRepository,
                                          BadgeService badgeService) {
         this.pharmacyRepresentativeRepository = pharmacyRepresentativeRepository;
+        this.participantRepository = participantRepository;
         this.badgeService = badgeService;
     }
 
@@ -49,7 +53,7 @@ public class PharmacyRepresentativeService {
         pharmacyRepresentative.setCorporateReason(pharmacyRepresentativeDto.getCorporateReason());
 
         // Save the pharmacyRepresentative entity to the repository
-        pharmacyRepresentativeRepository.save(pharmacyRepresentative);
+        participantRepository.save(pharmacyRepresentative);
 
         // Return a response DTO containing the saved pharmacyRepresentative information
         return new PharmacyRepresentativeResponseDto(pharmacyRepresentative);

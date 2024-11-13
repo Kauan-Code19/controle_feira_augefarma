@@ -12,6 +12,8 @@ import com.augefarma.controle_feira.services.socket.RealTimeUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,9 +34,9 @@ public class ValidateExitService {
 
     public ValidateEntryExitResponseDto validateExitBuffet(String cpf, EventSegment eventSegment) {
         ParticipantEntity participant = getParticipantByCpf(cpf);
-
         return handleCheckOutBuffet(participant, eventSegment);
     }
+
 
     @Transactional(readOnly = true)
     private ParticipantEntity getParticipantByCpf(String cpf) {
@@ -42,30 +44,54 @@ public class ValidateExitService {
                 .orElseThrow(() -> new ResourceNotFoundException("Nenhum participante encontrado"));
     }
 
+
     private ValidateEntryExitResponseDto handleCheckOutBuffet(
             ParticipantEntity participant, EventSegment eventSegment) {
 
-        List<EntryRecordEntity> entryRecordsList = participant.getEntryRecords()
-                .stream().filter(entry -> entry.getEventSegment() == EventSegment.FAIR)
-                .toList();
+        List<EntryRecordEntity> previousEntries = hasPreviousEntryForFair(participant);
+        List<ExitRecordEntity> previousExits = hasPreviousExitForBuffet(participant);
 
-        if (entryRecordsList.isEmpty()) {
-            return new ValidateEntryExitResponseDto("Acesso negado: CPF " + participant.getCpf()
+        if (previousEntries.isEmpty()) {
+            return new ValidateEntryExitResponseDto("Saída negado: CPF " + participant.getCpf()
                     + " com ID " + participant.getId() + " usuário sem registro de check-in");
         }
 
-        return performCheckOut(participant, eventSegment);
+        return performCheckOut(participant, eventSegment, previousExits);
     }
 
-    private ValidateEntryExitResponseDto performCheckOut(
-            ParticipantEntity participant, EventSegment eventSegment) {
 
-        createExitRecord(participant, eventSegment);
+    private List<EntryRecordEntity> hasPreviousEntryForFair(ParticipantEntity participant) {
+        return  participant.getEntryRecords()
+                .stream()
+                .filter(entry -> entry.getEventSegment() == EventSegment.FAIR
+                        && entry.getCheckinTime().toLocalDate().isEqual(LocalDate.now())).toList();
+    }
+
+    private List<ExitRecordEntity> hasPreviousExitForBuffet(ParticipantEntity participant) {
+        return  participant.getExitRecords()
+                .stream()
+                .filter(exit -> exit.getEventSegment() == EventSegment.BUFFET
+                        && exit.getCheckoutTime().toLocalDate().isEqual(LocalDate.now())).toList();
+    }
+
+    private ValidateEntryExitResponseDto performCheckOut(ParticipantEntity participant, EventSegment eventSegment,
+                                                         List<ExitRecordEntity> previousEntries) {
+
+        if (!previousEntries.isEmpty()) {
+            createExitRecord(participant, eventSegment);
+            return buildRegisteredExitResponse(participant, true);
+        }
 
         callRealtimeUpdateService(participant);
-
-        return new ValidateEntryExitResponseDto("Saída registrada");
+        createExitRecord(participant, eventSegment);
+        return buildRegisteredExitResponse(participant, false);
     }
+
+
+    private void callRealtimeUpdateService(ParticipantEntity participant) {
+        participant.removeToRealtimeUpdateService(realTimeUpdateService);
+    }
+
 
     @Transactional
     private void createExitRecord(ParticipantEntity participant,
@@ -78,7 +104,14 @@ public class ValidateExitService {
         exitRecordRepository.save(exitRecord);
     }
 
-    private void callRealtimeUpdateService(ParticipantEntity participant) {
-        participant.removeToRealtimeUpdateService(realTimeUpdateService);
+
+    private ValidateEntryExitResponseDto buildRegisteredExitResponse(ParticipantEntity participant,
+                                                                    boolean hasPreviousExit) {
+        if (hasPreviousExit) {
+            return new ValidateEntryExitResponseDto("Saída registrada: CPF " + participant.getCpf()
+                    + " com ID " + participant.getId() + " já possui um ou mais registros de saída");
+        }
+
+        return new ValidateEntryExitResponseDto("Saída registrada");
     }
 }
