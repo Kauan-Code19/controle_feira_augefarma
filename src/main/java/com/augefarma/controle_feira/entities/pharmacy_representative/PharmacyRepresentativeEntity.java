@@ -24,10 +24,10 @@ import lombok.EqualsAndHashCode;
 @Table(name = "PharmacyRepresentatives")
 public class PharmacyRepresentativeEntity extends ParticipantEntity {
 
-    @Column(name = "cnpj", nullable = false, unique = true, updatable = false)
+    @Column(name = "cnpj", nullable = false, updatable = false)
     private String cnpj;
 
-    @Column(name = "corporate_reason", nullable = false, unique = true, updatable = false)
+    @Column(name = "corporate_reason", nullable = false, updatable = false)
     private String corporateReason;
 
     @Override

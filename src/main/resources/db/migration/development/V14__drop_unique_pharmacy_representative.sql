@@ -1,0 +1,2 @@
+ALTER TABLE pharmacy_representatives DROP CONSTRAINT pharmacy_representatives_cnpj_key;
+ALTER TABLE pharmacy_representatives DROP CONSTRAINT pharmacy_representatives_corporate_reason_key;
