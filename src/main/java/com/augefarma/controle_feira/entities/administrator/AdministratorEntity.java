@@ -1,11 +1,6 @@
 package com.augefarma.controle_feira.entities.administrator;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,10 +39,19 @@ public class AdministratorEntity implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, updatable = true)
+    private AdministratorRole role;
+
     // Returns the authorities granted to the administrator
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        if (this.role == AdministratorRole.LEVEL_TWO) {
+            return List.of(new SimpleGrantedAuthority("ROLE_LEVEL_TWO"),
+                    new SimpleGrantedAuthority("ROLE_LEVEL_ONE"));
+        }
+
+        return List.of(new SimpleGrantedAuthority("ROLE_LEVEL_ONE"));
     }
 
     // Returns the email as the username

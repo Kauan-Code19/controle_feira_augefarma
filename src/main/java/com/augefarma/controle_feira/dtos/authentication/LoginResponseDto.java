@@ -1,4 +1,6 @@
 package com.augefarma.controle_feira.dtos.authentication;
 
-public record LoginResponseDto(String token) {
+import com.augefarma.controle_feira.entities.administrator.AdministratorRole;
+
+public record LoginResponseDto(String token, AdministratorRole role) {
 }

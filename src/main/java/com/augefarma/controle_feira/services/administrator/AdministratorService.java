@@ -38,6 +38,7 @@ public class AdministratorService {
                 .encode(administratorDto.getPassword());
 
         administrator.setPassword(encryptedPassword);
+        administrator.setRole(administratorDto.getRole());
 
         administratorRepository.save(administrator); // Save the administrator entity to the repository
 
