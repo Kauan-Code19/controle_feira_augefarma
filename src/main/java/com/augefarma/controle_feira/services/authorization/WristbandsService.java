@@ -55,10 +55,18 @@ public class WristbandsService {
             return new WristbandsResponseDto(participant);
         }
 
-        return new WristbandsResponseDto(participant,
-                fairEntryRecordsOnTheCurrentDate.get(fairEntryRecordsOnTheCurrentDate.size() - 1)
-                        .getCheckinTime().format(formatDateAndTime()));
+        List<String> formattedCheckInTimes = formatCheckInTimes(fairEntryRecordsOnTheCurrentDate);
+
+        return new WristbandsResponseDto(participant, formattedCheckInTimes);
     }
+
+
+    private List<String> formatCheckInTimes(List<EntryRecordEntity> entryRecords) {
+        return entryRecords.stream()
+                .map(record -> record.getCheckinTime().format(formatDateAndTime()))
+                .toList();
+    }
+
 
     private DateTimeFormatter formatDateAndTime() {
         return DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss", Locale.forLanguageTag("pt-BR"));
