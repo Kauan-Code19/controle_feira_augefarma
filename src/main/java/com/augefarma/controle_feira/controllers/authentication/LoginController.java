@@ -47,6 +47,7 @@ public class LoginController {
         var token = tokenService.generateTokenAdministrator((AdministratorEntity) authentication.getPrincipal());
 
         // Return the generated token in the response
-        return ResponseEntity.ok(new LoginResponseDto(token));
+        return ResponseEntity.ok(new LoginResponseDto(token, ((AdministratorEntity) authentication
+                .getPrincipal()).getRole()));
     }
 }

@@ -166,7 +166,7 @@ public class ExceptionHandlerController  extends ResponseEntityExceptionHandler 
 
         String mensagemErro = exception.getMessage();
 
-        Pattern pattern = Pattern.compile("Detalhe:.*?[(].*?[)] já existe.");
+        Pattern pattern = Pattern.compile("ERRO:.*");
         Matcher matcher = pattern.matcher(mensagemErro);
 
         String erroDetalhado = "Detalhe não identificado";

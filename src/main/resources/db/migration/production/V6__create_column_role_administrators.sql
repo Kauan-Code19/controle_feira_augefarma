@@ -1,0 +1,2 @@
+ALTER TABLE Administrators
+ADD COLUMN role VARCHAR(20) NOT NULL;
